@@ -1,0 +1,27 @@
+{
+  "name": "packdown",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imsky/packdown.git"
+  },
+  "keywords": [
+    "markdown",
+    "pack",
+    "file",
+    "collection",
+    "concatenate"
+  ],
+  "author": "Ivan Malopinsky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imsky/packdown/issues"
+  },
+  "homepage": "https://github.com/imsky/packdown#readme",
+  "dependencies": {
+  }
+}
