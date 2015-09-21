@@ -1,0 +1,17 @@
+{    
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "rules": {
+        "strict": 0,
+        "comma-dangle": [2, "never"],
+        "no-console": 1,
+        "no-debugger": 2,
+        "no-alert": 2,
+        "no-unreachable": 2,
+        "no-empty": 2,
+        "no-undef": 2,
+        "semi": [1, "always"]
+    }
+}

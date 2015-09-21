@@ -1,0 +1,13 @@
+{
+  "preset": "default",
+
+  "whiteSpace": {
+    "removeTrailing": 1,
+    "value": " ",
+
+    "after": {
+      "FunctionName": 1,
+      "FunctionReservedWord": 1
+    }
+  }
+}
