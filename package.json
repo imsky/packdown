@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/**/*-test.js",
-    "parser": "nearleyc lib/packdown.ne",
+    "nearley": "nearleyc lib/packdown.ne -o lib/packdown-nearley.js",
     "browserify": "browserify -s Packdown index.js -o packdown.js",
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
     "format": "jsfmt --write -v lib",
