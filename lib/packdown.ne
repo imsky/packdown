@@ -45,13 +45,20 @@ FileHeader ->
 CodeBlock ->
     #todo: extract language tag
     #todo: check if trailing "```\n" makes sense
-    "```" "\n" CodeText "```" {% function (d) { return d[2]; } %}
+    CodeBlockId CodeText "```" {% function (d) { return d[2]; } %}
 
 CodeText ->
     CodeLine:* {% id %}
 
 CodeLine ->
     .:+ "\n" {% IDJOIN %}
+
+CodeBlockId ->
+    "```" CodeBlockTag:? "\n"
+
+# code block tags can't start with dashes
+CodeBlockTag ->
+    [a-z0-9] [\-a-z0-9]:+
 
 HeadingText ->
     [^\n]:+ {% IDJOIN %}
