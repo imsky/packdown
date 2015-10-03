@@ -33,19 +33,27 @@ FileList ->
 FileBlock ->
     FileHeader CodeBlock NL 
       {% function (d) {
-        return {
-          'path': d[0],
-          'lines': d[1]
+        var data = d[1];
+        var retval = {
+          'name': d[0],
+          'tag': data.tag,
+          'content': data.content
         };
+        data = null;
+        return retval;
       } %}
 
 FileHeader ->
     "## " PathText NL {% function (d) { return d[1]; } %}
 
 CodeBlock ->
-    #todo: extract language tag
-    #todo: check if trailing "```\n" makes sense
-    CodeBlockId CodeText "```" {% function (d) { return d[2]; } %}
+    CodeBlockStart CodeText "```"
+      {% function (d) {
+        return {
+          'tag': d[0],
+          'content': d[1]
+        };
+      } %}
 
 CodeText ->
     CodeLine:* {% id %}
@@ -53,12 +61,15 @@ CodeText ->
 CodeLine ->
     .:+ "\n" {% IDJOIN %}
 
-CodeBlockId ->
-    "```" CodeBlockTag:? "\n"
+CodeBlockStart ->
+    "```" CodeBlockTag:? "\n" {% function (d) { return d[1]; } %}
 
 # code block tags can't start with dashes
 CodeBlockTag ->
-    [a-z0-9] [\-a-z0-9]:+
+    [a-z0-9] [\-a-z0-9]:+ 
+      {% function (d) {
+        return d[0] + d[1].join('');
+      } %}
 
 HeadingText ->
     [^\n]:+ {% IDJOIN %}
