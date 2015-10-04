@@ -6,12 +6,13 @@
 @{% function IDJOIN (d) { return d[0].join(''); } %}
 
 Document ->
-    Preamble DocHeader FileList
+    Preamble DocHeader DocInfo FileList
       {% function (d) {
         return {
           'preamble': d[0],
-          'title': d[1],
-          'files': d[2]
+          'name': d[1],
+          'info': d[2],
+          'files': d[3]
         };
       } %}
 
@@ -25,7 +26,10 @@ Preamble ->
       } %}
 
 DocHeader ->
-    "# " HeadingText NL {% function (d) { return d[1]; } %}
+    "# " HeadingText "\n" {% function (d) { return d[1]; } %}
+
+DocInfo ->
+    DocSafeBlock {% id %}
 
 FileList ->
     FileBlock:+ {% id %}
@@ -45,10 +49,11 @@ FileBlock ->
       } %}
 
 FileHeader ->
-    "## " PathText "\n" {% function (d) { return d[1]; } %}
+    "## " PathText "\n"
+      {% function (d) { return d[1]; } %}
 
 FileInfo -> 
-    TextBlock 
+    SafeBlock
       {% function (d) {
         var data = d[0];
         if (!data.length) return null;
@@ -57,7 +62,7 @@ FileInfo ->
       } %}
 
 CodeBlock ->
-    CodeBlockStart TextBlock "```"
+    CodeBlockStart SafeBlock "```"
       {% function (d) {
         return {
           'tag': d[0],
@@ -66,7 +71,8 @@ CodeBlock ->
       } %}
 
 CodeBlockStart ->
-    "```" CodeBlockTag:? "\n" {% function (d) { return d[1]; } %}
+    "```" CodeBlockTag:? "\n"
+      {% function (d) { return d[1]; } %}
 
 # code block tags can't start with dashes
 CodeBlockTag ->
@@ -75,18 +81,29 @@ CodeBlockTag ->
         return d[0] + d[1].join('');
       } %}
 
-TextBlock ->
-    TextLine:* {% id %}
+SafeBlock ->
+    SafeLine:* {% id %}
 
-TextLine ->
-    .:* "\n" {% function (d, l, reject) {
-    var line = d[0].join('');
-    if (line.indexOf('```') === 0) return reject;
-    return line;
-    } %}
+# lines that are safe in a file context - info or code
+SafeLine ->
+    .:* "\n"
+      {% function (d, l, reject) {
+        var line = d[0].join('');
+        if (line.indexOf('```') === 0) return reject;
+        return line;
+      } %}
 
-CodeLine ->
-    .:* "\n" {% IDJOIN %}
+DocSafeBlock ->
+    DocSafeLine:* {% id %}
+
+# lines that are safe in document context - text only or h3+ headings
+DocSafeLine ->
+    .:* "\n"
+      {% function (d, l, reject) {
+        var line = d[0].join('');
+        if (line[0] === '#' && !line.match(/^#{3,}/)) return reject;
+        return line;
+      } %}
 
 HeadingText ->
     [^\n]:+ {% IDJOIN %}
@@ -102,8 +119,9 @@ int ->
 
 # Merge multiple newlines into one
 NL ->
-    "\n":* {% function () { return "\n";} %}
+    "\n":*
+      {% function () { return "\n";} %}
 
 _ ->
-  null   {% NULL %}
-  | [\s] _  {% NULL %}
+    null   {% NULL %}
+    | [\s] _  {% NULL %}
