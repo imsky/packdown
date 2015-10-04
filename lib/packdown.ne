@@ -31,11 +31,12 @@ FileList ->
     FileBlock:+ {% id %}
 
 FileBlock ->
-    FileHeader CodeBlock NL 
+    FileHeader FileInfo CodeBlock NL 
       {% function (d) {
-        var data = d[1];
+        var data = d[2];
         var retval = {
           'name': d[0],
+          'info': d[1],
           'tag': data.tag,
           'content': data.content
         };
@@ -44,22 +45,25 @@ FileBlock ->
       } %}
 
 FileHeader ->
-    "## " PathText NL {% function (d) { return d[1]; } %}
+    "## " PathText "\n" {% function (d) { return d[1]; } %}
+
+FileInfo -> 
+    TextBlock 
+      {% function (d) {
+        var data = d[0];
+        if (!data.length) return null;
+        if (data.length === 1 && data[0] === '') return null;
+        return data;
+      } %}
 
 CodeBlock ->
-    CodeBlockStart CodeText "```"
+    CodeBlockStart TextBlock "```"
       {% function (d) {
         return {
           'tag': d[0],
           'content': d[1]
         };
       } %}
-
-CodeText ->
-    CodeLine:* {% id %}
-
-CodeLine ->
-    .:+ "\n" {% IDJOIN %}
 
 CodeBlockStart ->
     "```" CodeBlockTag:? "\n" {% function (d) { return d[1]; } %}
@@ -70,6 +74,19 @@ CodeBlockTag ->
       {% function (d) {
         return d[0] + d[1].join('');
       } %}
+
+TextBlock ->
+    TextLine:* {% id %}
+
+TextLine ->
+    .:* "\n" {% function (d, l, reject) {
+    var line = d[0].join('');
+    if (line.indexOf('```') === 0) return reject;
+    return line;
+    } %}
+
+CodeLine ->
+    .:* "\n" {% IDJOIN %}
 
 HeadingText ->
     [^\n]:+ {% IDJOIN %}
