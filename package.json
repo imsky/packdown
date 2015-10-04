@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/**/*-test.js",
-    "nearley": "nearleyc lib/packdown.ne -o lib/packdown-nearley.js",
+    "nearley": "nearleyc lib/packdown.ne -o lib/grammar.js",
     "browserify": "browserify -s Packdown index.js -o packdown.js",
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
     "format": "jsfmt --write -v lib",
-    "lint": "eslint lib/**",
-    "check": "npm test && npm run format && npm run lint",
-    "build": "npm run check && npm run browserify && npm run uglify",
+    "lint": "eslint lib/**/*.js",
+    "cleanup": "npm run format && npm run lint",
+    "build": "npm run cleanup && npm run nearley && npm run browserify && npm run uglify && npm test",
     "prepublish": "npm run build"
   },
   "repository": {

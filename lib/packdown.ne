@@ -1,4 +1,4 @@
-# Packdown parser
+# Packdown Grammar - written in nearley syntax
 
 @{% function NULL () { return null; } %}
 @{% function CONCAT (d) { return d[0] + d[1]; } %}
@@ -10,17 +10,17 @@ Document ->
       {% function (d) {
         return {
           'preamble': d[0],
-          'document': d[1],
+          'title': d[1],
           'files': d[2]
         };
       } %}
 
 Preamble ->
-    "<!-- packdown-" int "-" ParserVersion " -->" NL
+    "<!-- packdown-" int "-" SemVer " -->" NL
       {% function (d) {
         return {
-          format: d[1],
-          version: d[3]
+          formatVersion: d[1],
+          packageVersion: d[3]
         };
       } %}
 
@@ -94,7 +94,7 @@ HeadingText ->
 PathText ->  
     [a-z0-9\.\-\/]:+ {% IDJOIN %}
 
-ParserVersion ->
+SemVer ->
     int "." int "." int {% JOIN %}
 
 int ->
