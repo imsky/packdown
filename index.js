@@ -1,15 +1,18 @@
 var writer = require('./lib/writer');
 var reader = require('./lib/reader');
 
-exports.write = function (document) {
-  var packageVersion = '0.0.0';
-  var formatVersion = 1;
+var packageVersion = '0.0.0';
+var formatVersion = 1;
 
-  var options = {
+exports.options = function () {
+  return {
     'packageVersion': packageVersion,
     'formatVersion': formatVersion
   };
+};
 
+exports.write = function (document) {
+  var options = exports.options();
   return writer(document, options);
 };
 
