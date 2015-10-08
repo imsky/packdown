@@ -1,21 +1,21 @@
+var metadata = require('./packdown-metadata');
+
 var writer = require('./lib/writer');
 var reader = require('./lib/reader');
 
-var packageVersion = '0.0.0';
-var formatVersion = 1;
-
-exports.options = function () {
+var versionInfo = function () {
   return {
-    'packageVersion': packageVersion,
-    'formatVersion': formatVersion
+    'packageVersion': metadata.packageVersion,
+    'formatVersion': metadata.formatVersion
   };
 };
 
 exports.write = function (document) {
-  var options = exports.options();
-  return writer(document, options);
+  return writer(document, versionInfo());
 };
 
 exports.read = function (document) {
   return reader(document);
 };
+
+exports.version = versionInfo();
