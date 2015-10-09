@@ -4,6 +4,9 @@
   "formatVersion": 1,
   "description": "",
   "main": "index.js",
+  "bin": {
+    "packdown": "./bin/packdown.js"
+  },
   "scripts": {
     "test": "mocha test/**/*-test.js",
     "nearley": "nearleyc lib/packdown.ne -o lib/grammar.js",
@@ -12,10 +15,10 @@
     "format": "jsfmt --write -v lib",
     "lint": "eslint lib/**/*.js",
     "cleanup": "",
-    "quality": "npm test && npm run format && npm run lint",
-    "banner": "cat packdown-banner.txt packdown.js > packdown-tmp.js && cat packdown-banner.txt packdown.min.js > packdown.min-tmp.js && mv packdown-tmp.js packdown.js && mv packdown.min-tmp.js packdown.min.js",
+    "quality": "npm run format && npm run lint",
+    "banner": "shjs scripts/banner",
     "prebuild": "npm run quality && node extras/packdown-metadata && npm run nearley",
-    "build": "npm run browserify",
+    "build": "npm run browserify && npm test",
     "postbuild": "npm run uglify && npm run banner",
     "prepublish": "npm run build"
   },
@@ -52,6 +55,7 @@
     "jsfmt": "^0.5.0",
     "jsonfile": "^2.2.2",
     "mocha": "^2.3.2",
+    "shelljs": "^0.5.3",
     "uglify-js": "^2.4.24",
     "walk": "^2.3.9"
   }
