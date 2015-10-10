@@ -6,17 +6,17 @@
 @{% function IDJOIN (d) { return d[0].join(''); } %}
 
 Document ->
-    Preamble DocHeader DocInfo FileList
+    Metadata DocHeader DocInfo FileList
       {% function (d) {
         return {
-          'preamble': d[0],
+          'metadata': d[0],
           'name': d[1],
           'info': d[2],
           'files': d[3]
         };
       } %}
 
-Preamble ->
+Metadata ->
     "<!-- packdown-" int "-" SemVer " -->" NL
       {% function (d) {
         return {
