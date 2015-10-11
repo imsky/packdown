@@ -9,9 +9,7 @@ chai.use(chaiAsPromised);
 
 var promise = require('bluebird');
 
-var support = require('../support');
-
-var packdown = support.packdown;
+var packdown = require('../../index');
 
 var inputDir = './input';
 
@@ -25,9 +23,9 @@ describe('Packdown Reader', function () {
       })
       .then(packdown.read)
       .then(function (output) {
-        output.should.have.all.keys('preamble', 'name', 'info', 'files');
-        output.should.have.deep.property('preamble.formatVersion');
-        output.should.have.deep.property('preamble.packageVersion');
+        output.should.have.all.keys('metadata', 'name', 'info', 'files');
+        output.should.have.deep.property('metadata.formatVersion');
+        output.should.have.deep.property('metadata.packageVersion');
         output.name.should.equal('Basic Document');
         output.files.length.should.equal(1);
 

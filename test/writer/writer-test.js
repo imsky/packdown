@@ -4,11 +4,11 @@ var path = require('path');
 var diff = require('diff');
 var promise = require('bluebird');
 
-var support = require('../support');
+var scripts = require('../../scripts');
+var packdown = require('../../index');
 
-var packdown = support.packdown;
-var readDir = support.readDir;
-var filesToDoc = support.filesToDoc;
+var readDir = scripts.readDir;
+var filesToDoc = scripts.filesToDoc;
 
 var readDirAsync = promise.promisify(readDir);
 var filesToDocAsync = promise.promisify(filesToDoc);
@@ -19,7 +19,6 @@ var refDir = './reference';
 promise.promisifyAll(fs);
 
 describe('Packdown Writer', function () {
-
   it('creates basic file', function () {
     var testDir = path.join(__dirname, inputDir, 'basic');
     var refFile = path.join(__dirname, refDir, 'basic', 'output.md');
