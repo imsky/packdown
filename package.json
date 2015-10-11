@@ -1,5 +1,5 @@
 {
-  "name": "packdown",
+  "name": "packdownjs",
   "version": "0.0.0",
   "formatVersion": 1,
   "description": "",
@@ -17,8 +17,8 @@
     "cleanup": "",
     "quality": "npm run format && npm run lint",
     "banner": "shjs scripts/banner",
-    "prebuild": "npm run quality && node extras/packdown-metadata && npm run nearley",
-    "build": "npm run browserify && npm test",
+    "prebuild": "node scripts/packdown-metadata && npm run nearley",
+    "build": "npm run quality && npm run browserify && npm test",
     "postbuild": "npm run uglify && npm run banner",
     "prepublish": "npm run build"
   },
