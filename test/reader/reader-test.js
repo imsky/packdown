@@ -9,7 +9,7 @@ chai.use(chaiAsPromised);
 
 var promise = require('bluebird');
 
-var packdown = require('../../index');
+var read = require('../../lib/reader');
 
 var inputDir = './input';
 
@@ -21,7 +21,7 @@ describe('Packdown Reader', function () {
       .then(function (output) {
         return new Buffer(output).toString('utf8');
       })
-      .then(packdown.read)
+      .then(read)
       .then(function (output) {
         output.should.have.all.keys('metadata', 'name', 'info', 'files');
         output.should.have.deep.property('metadata.formatVersion');
@@ -47,7 +47,7 @@ describe('Packdown Reader', function () {
       .then(function (output) {
         return new Buffer(output).toString('utf8');
       })
-      .then(packdown.read)
+      .then(read)
       .then(function (output) {
         var info = output.info.join('');
 
