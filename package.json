@@ -14,13 +14,19 @@
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
     "format": "jsfmt --write -v lib",
     "lint": "eslint lib/**/*.js",
-    "cleanup": "",
+    "coverage": "mocha test/**/*-test.js --require blanket -R html-cov > coverage.html",
     "quality": "npm run format && npm run lint",
     "banner": "shjs scripts/banner",
     "prebuild": "node scripts/packdown-metadata && npm run nearley",
     "build": "npm run quality && npm run browserify && npm test",
     "postbuild": "npm run uglify && npm run banner",
     "prepublish": "npm run build"
+  },
+  "config": {
+    "blanket": {
+      "pattern": ["lib"],
+      "data-cover-never": ["node_modules"]
+    }
   },
   "repository": {
     "type": "git",
@@ -45,6 +51,7 @@
     "utf8": "^2.1.1"
   },
   "devDependencies": {
+    "blanket": "^1.1.7",
     "bluebird": "^2.10.0",
     "browserify": "^11.1.0",
     "chai": "^3.3.0",
