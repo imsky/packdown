@@ -16,6 +16,13 @@ var inputDir = './input';
 promise.promisifyAll(fs);
 
 describe('Packdown Reader', function () {
+
+  it('fails on an invalid file', function () {
+    return promise.resolve(' ')
+      .then(read)
+      .should.be.rejected;
+  });
+
   it('correctly reads a basic file', function () {
     return fs.readFileAsync(path.join(__dirname, inputDir, 'basic.md'))
       .then(function (output) {
