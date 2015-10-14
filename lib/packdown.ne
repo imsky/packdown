@@ -1,7 +1,6 @@
 # Packdown Grammar - written in nearley syntax
 
 @{% function NULL () { return null; } %}
-@{% function CONCAT (d) { return d[0] + d[1]; } %}
 @{% function JOIN (d) { return d.join(''); } %}
 @{% function IDJOIN (d) { return d[0].join(''); } %}
 

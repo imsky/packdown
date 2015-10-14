@@ -4,6 +4,12 @@ var path = require('path');
 var diff = require('diff');
 var promise = require('bluebird');
 
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
+
+var should = chai.should();
+chai.use(chaiAsPromised);
+
 var scripts = require('../../scripts');
 var write = require('../../lib/writer');
 
@@ -24,7 +30,31 @@ describe('Packdown Writer', function () {
     'packageVersion': '0.0.0'
   };
 
-  it('creates basic file', function () {
+  it('fails with invalid document', function () {
+    return promise.resolve({})
+      .then(function (doc) {
+        return write(doc, options);
+      })
+      .should.be.rejected;
+  });
+
+  it('fails without files', function () {
+    return promise.resolve({'files': []})
+      .then(function (doc) {
+        return write(doc, options);
+      })
+      .should.be.rejected;
+  });
+
+  it('fails with invalid files', function () {
+    return promise.resolve({'files': [{}]})
+      .then(function (doc) {
+        return write(doc, options);
+      })
+      .should.be.rejected;
+  });
+
+  it('creates basic document', function () {
     var testDir = path.join(__dirname, inputDir, 'basic');
     var refFile = path.join(__dirname, refDir, 'basic', 'output.md');
     return readDirAsync(testDir)
