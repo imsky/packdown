@@ -5,7 +5,7 @@ var diff = require('diff');
 var promise = require('bluebird');
 
 var scripts = require('../../scripts');
-var packdown = require('../../index');
+var write = require('../../lib/writer');
 
 var readDir = scripts.readDir;
 var filesToDoc = scripts.filesToDoc;
@@ -19,13 +19,18 @@ var refDir = './reference';
 promise.promisifyAll(fs);
 
 describe('Packdown Writer', function () {
+  var options = {
+    'formatVersion': 1,
+    'packageVersion': '0.0.0'
+  };
+
   it('creates basic file', function () {
     var testDir = path.join(__dirname, inputDir, 'basic');
     var refFile = path.join(__dirname, refDir, 'basic', 'output.md');
     return readDirAsync(testDir)
       .then(filesToDocAsync)
       .then(function (doc) {
-        return packdown.write(doc);
+        return write(doc, options);
       })
       .then(function (output) {
         var ref = fs.readFileAsync(refFile)

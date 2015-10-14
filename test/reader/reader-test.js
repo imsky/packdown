@@ -15,6 +15,13 @@ var inputDir = './input';
 
 promise.promisifyAll(fs);
 
+function readInputFile(filename) {
+  return fs.readFileAsync(path.join(__dirname, inputDir, filename))
+    .then(function (output) {
+      return new Buffer(output).toString('utf8');
+    });
+}
+
 describe('Packdown Reader', function () {
 
   it('fails on an invalid file', function () {
@@ -24,10 +31,7 @@ describe('Packdown Reader', function () {
   });
 
   it('correctly reads a basic file', function () {
-    return fs.readFileAsync(path.join(__dirname, inputDir, 'basic.md'))
-      .then(function (output) {
-        return new Buffer(output).toString('utf8');
-      })
+    return readInputFile('basic.md')
       .then(read)
       .then(function (output) {
         output.should.have.all.keys('metadata', 'name', 'info', 'files');
@@ -50,10 +54,7 @@ describe('Packdown Reader', function () {
   });
 
   it('correctly reads a file with descriptions', function () {
-    return fs.readFileAsync(path.join(__dirname, inputDir, 'basic-description.md'))
-      .then(function (output) {
-        return new Buffer(output).toString('utf8');
-      })
+    return readInputFile('basic-description.md')
       .then(read)
       .then(function (output) {
         var info = output.info.join('');
