@@ -30,7 +30,7 @@ describe('Packdown Reader', function () {
       .should.be.rejected;
   });
 
-  it('correctly reads a basic file', function () {
+  it('correctly reads a basic document', function () {
     return readInputFile('basic.md')
       .then(read)
       .then(function (output) {
@@ -53,7 +53,7 @@ describe('Packdown Reader', function () {
       });
   });
 
-  it('correctly reads a file with descriptions', function () {
+  it('correctly reads a document with descriptions', function () {
     return readInputFile('basic-description.md')
       .then(read)
       .then(function (output) {
@@ -65,6 +65,28 @@ describe('Packdown Reader', function () {
         var fileInfo = file.info.join('');
 
         fileInfo.should.equal('Hello world.');
+      });
+  });
+
+  it('correctly reads a document with multiple files', function() {
+    return readInputFile('basic-multiple.md')
+      .then(read)
+      .then(function(output) {
+        var files = output.files;
+
+        files.length.should.equal(2);
+        files[0].should.deep.equal({
+          name: 'hello.js',
+          info: ['', 'Hello world.', ''],
+          tag: 'js',
+          content: ['var hello = World();']
+        });
+        files[1].should.deep.equal({
+          name: 'world.js',
+          info: ['', 'Hello again, world.', ''],
+          tag: 'js',
+          content: ['var world = Hello();']
+        });
       });
   });
 });
