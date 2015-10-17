@@ -24,8 +24,12 @@
   },
   "config": {
     "blanket": {
-      "pattern": ["lib"],
-      "data-cover-never": ["node_modules"]
+      "pattern": [
+        "lib"
+      ],
+      "data-cover-never": [
+        "node_modules"
+      ]
     }
   },
   "repository": {
@@ -47,8 +51,10 @@
   "homepage": "https://github.com/imsky/packdown#readme",
   "dependencies": {
     "base-64": "^0.1.0",
+    "json-stable-stringify": "^1.0.0",
     "nearley": "^1.6.2",
-    "utf8": "^2.1.1"
+    "utf8": "^2.1.1",
+    "yargs": "^3.27.0"
   },
   "devDependencies": {
     "blanket": "^1.1.7",
