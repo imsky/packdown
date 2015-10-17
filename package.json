@@ -1,10 +1,10 @@
 {
   "name": "packdownjs",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "formatVersion": 1,
   "description": "",
   "main": "index.js",
-  "bin": {
+  "_bin": {
     "packdown": "./bin/packdown.js"
   },
   "scripts": {
@@ -17,7 +17,7 @@
     "coverage": "mocha test/**/*-test.js --require blanket -R html-cov > coverage.html",
     "quality": "npm run format && npm run lint",
     "banner": "shjs scripts/banner",
-    "prebuild": "node scripts/packdown-metadata && npm run nearley",
+    "prebuild": "node scripts/packdown-version && npm run nearley",
     "build": "npm run quality && npm run browserify && npm test",
     "postbuild": "npm run uglify && npm run banner",
     "prepublish": "npm run build"
@@ -40,8 +40,7 @@
     "markdown",
     "pack",
     "file",
-    "collection",
-    "concatenate"
+    "collection"
   ],
   "author": "Ivan Malopinsky",
   "license": "MIT",

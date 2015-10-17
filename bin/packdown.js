@@ -15,6 +15,12 @@ promise.promisifyAll(fs);
 
 var argv = require('yargs').argv;
 
+function log (obj) {
+  console.log(stringify(obj, {
+    'space': 2
+  }));
+}
+
 var commands = {
   'read': function (args) {
     var file = args[0];
@@ -27,12 +33,11 @@ var commands = {
           var string = new Buffer(contents).toString('utf8');
           return packdown.read(string);
         })
-        .then(function (output) {
-          console.log(stringify(output, {
-            'space': 2
-          }));
-        });
+        .tap(log);
     }
+  },
+  'version': function () {
+    log(packdown.version);
   }
 };
 
@@ -42,6 +47,7 @@ if (!argv._.length) {
 } else {
   switch(argv._[0]) {
     case 'read':
+    case 'version':
       commands[argv._[0]](argv._.slice(1));
     break;
     default:
