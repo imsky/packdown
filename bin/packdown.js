@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
+var path = require('path');
 var fs = require('fs');
-var stringify = require('json-stable-stringify')
 
+require('shelljs/global');
+
+var stringify = require('json-stable-stringify')
 var promise = require('bluebird');
+var pluralize = require('pluralize');
 
 var scripts = require('../scripts');
 var packdown = require('../index');
@@ -36,6 +40,40 @@ var commands = {
         .tap(log);
     }
   },
+
+  'extract': function (args) {
+    var file = args[0];
+    var dir = args[1];
+
+    if (!file || !dir) {
+      throw Error('Input file or output directory is missing');
+    } else {
+
+      mkdir('-p', dir);
+
+      fs.readFileAsync(file)
+        .then(function (contents) {
+          return new Buffer(contents).toString('utf8')
+        })
+        .then(packdown.read)
+        .then(function (doc) {
+          if (doc.files.length) {
+            return doc.files;
+          } else {
+            throw Error('No files embedded in document');
+          }
+        })
+        .then(function (files) {
+          files.forEach(function (file) {
+            var content = file.content.join('\n');
+            fs.writeFileSync(path.join(dir, file.name), content);
+          });
+
+          console.info(pluralize('file', files.length, true) + ' extracted');
+        });
+    }
+  },
+
   'version': function () {
     log(packdown.version);
   }
@@ -48,10 +86,13 @@ if (!argv._.length) {
   switch(argv._[0]) {
     case 'read':
     case 'version':
+    case 'extract':
       commands[argv._[0]](argv._.slice(1));
     break;
     default:
-      throw Error('Not implemented');
+      //todo: show usage
+      console.error('Not implemented');
+      process.exit(1);
     break;
   }
 }

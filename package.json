@@ -2,8 +2,14 @@
   "name": "packdownjs",
   "version": "0.1.0",
   "formatVersion": 1,
+  "author": "Ivan Malopinsky",
+  "license": "MIT",
   "description": "",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imsky/packdown.git"
+  },
   "_bin": {
     "packdown": "./bin/packdown.js"
   },
@@ -32,26 +38,21 @@
       ]
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/imsky/packdown.git"
-  },
   "keywords": [
     "markdown",
     "pack",
     "file",
     "collection"
   ],
-  "author": "Ivan Malopinsky",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/imsky/packdown/issues"
   },
-  "homepage": "https://github.com/imsky/packdown#readme",
+  "homepage": "https://github.com/imsky/packdown",
   "dependencies": {
     "base-64": "^0.1.0",
     "json-stable-stringify": "^1.0.0",
     "nearley": "^1.6.2",
+    "pluralize": "^1.2.1",
     "utf8": "^2.1.1",
     "yargs": "^3.27.0"
   },
