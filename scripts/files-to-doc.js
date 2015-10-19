@@ -1,5 +1,3 @@
-var safeExts = 'md packdown markdown'.split(' ');
-
 /**
  * Converts files array provided by read-dir extras script into
  * document usable by the Packdown writer.
@@ -15,10 +13,6 @@ module.exports = function (files, cb) {
 
   document.files = files.map(function (file) {
     var tag = file.ext.slice(1);
-
-    if (safeExts.indexOf(tag) !== -1) {
-      tag += '-base64';
-    }
 
     return {
       'name': file.path,
