@@ -55,11 +55,13 @@ describe('Packdown Writer', function () {
   });
 
   it('fails with missing document name', function () {
-    return promise.resolve({'files': [{
+    return promise.resolve({
+    'info': 'foo',
+    'files': [{
       'name': 'abc',
-      'info': null,
+      'info': 'bar',
       'tag': null,
-      'content': ['test']
+      'content': ['bar']
     }]})
       .then(function (doc) {
         return write(doc, options);
