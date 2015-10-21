@@ -54,6 +54,19 @@ describe('Packdown Writer', function () {
       .should.be.rejected;
   });
 
+  it('fails with missing document name', function () {
+    return promise.resolve({'files': [{
+      'name': 'abc',
+      'info': null,
+      'tag': null,
+      'content': ['test']
+    }]})
+      .then(function (doc) {
+        return write(doc, options);
+      })
+      .should.be.rejected;
+  });
+
   it('creates basic document', function () {
     var testDir = path.join(__dirname, inputDir, 'basic');
     var refFile = path.join(__dirname, refDir, 'basic', 'output.md');
