@@ -34,9 +34,6 @@ describe('Packdown Reader', function () {
     return readInputFile('basic.md')
       .then(read)
       .then(function (output) {
-        output.should.have.all.keys('metadata', 'name', 'info', 'files');
-        output.should.have.deep.property('metadata.formatVersion');
-        output.should.have.deep.property('metadata.packageVersion');
         output.name.should.equal('Basic Document');
         output.files.length.should.equal(1);
 

@@ -12,7 +12,6 @@ Packdown is a subset of Markdown, which means it can be rendered by most Markdow
 
 The structure of a Packdown document is as follows:
 
-* Metadata: an HTML comment that includes the format and parser versions
 * Document title and info
 * List of file blocks that consist of the following:
   * Path of the file
@@ -22,8 +21,6 @@ The structure of a Packdown document is as follows:
 ## Example
 
 <pre>
-&#x3C;!-- packdown-1-0.0.0 --&#x3E;
-
 # Example
 
 This is an example Packdown document. This block supports **Markdown**.

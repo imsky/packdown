@@ -1,5 +1,3 @@
-<!-- packdown-1-0.0.0 -->
-
 # Basic Document
 
 This is a basic document.
