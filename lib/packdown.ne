@@ -5,12 +5,22 @@
 @{% function IDJOIN (d) { return d[0].join(''); } %}
 
 Document ->
-    DocHeader DocInfo FileList
+    DocHeader DocInfo FileList Metadata:?
       {% function (d) {
         return {
           'name': d[0],
           'info': d[1],
-          'files': d[2]
+          'files': d[2],
+          'metadata': d[3]
+        };
+      } %}
+
+Metadata ->
+    "<!-- packdown-" int "-" SemVer " -->" NL
+      {% function (d) {
+        return {
+          formatVersion: d[1],
+          packageVersion: d[3]
         };
       } %}
 
