@@ -13,5 +13,25 @@ module.exports = function (pattern, cb) {
     'dot': true,
     'silent': true,
     'nocase': true
-  }, cb);
+  }, function (err, files) {
+    if (err) {
+      cb(err);
+    } else {
+      cb(null, files.map(function (file) {
+        var stat = fs.statSync(file);
+
+        if (!stat.isFile()) {
+          return false;
+        }
+
+        var content = fs.readFileSync(file);
+
+        return {
+          'path': file,
+          'ext': path.extname(file),
+          'content': content
+        };
+      }).filter(Boolean));
+    }
+  });
 };

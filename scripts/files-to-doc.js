@@ -12,6 +12,7 @@ module.exports = function (files, cb) {
   };
 
   document.files = files.map(function (file) {
+    //todo: don't slice if no period present
     var tag = file.ext.slice(1);
 
     return {
