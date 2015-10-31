@@ -8,16 +8,15 @@ require('shelljs/global');
 var stringify = require('json-stable-stringify')
 var promise = require('bluebird');
 var pluralize = require('pluralize');
+var yargs = require('yargs');
 
 var scripts = require('../scripts');
 var packdown = require('../index');
 
-var readDir = scripts.readDir;
-var filesToDoc = scripts.filesToDoc;
-
 promise.promisifyAll(fs);
+promise.promisifyAll(scripts);
 
-var argv = require('yargs').argv;
+var argv = yargs.argv;
 
 function log (obj) {
   console.log(stringify(obj, {
@@ -26,21 +25,6 @@ function log (obj) {
 }
 
 var commands = {
-  'read': function (args) {
-    var file = args[0];
-
-    if (!file) {
-      throw Error('No file to read');
-    } else {
-      fs.readFileAsync(file)
-        .then(function (contents) {
-          var string = new Buffer(contents).toString('utf8');
-          return packdown.read(string);
-        })
-        .tap(log);
-    }
-  },
-
   'extract': function (args) {
     var file = args[0];
     var dir = args[1];
@@ -48,9 +32,9 @@ var commands = {
     if (!file || !dir) {
       throw Error('Input file or output directory is missing');
     } else {
-
       mkdir('-p', dir);
 
+      //todo: read directory case
       fs.readFileAsync(file)
         .then(function (contents) {
           return new Buffer(contents).toString('utf8')
@@ -64,6 +48,10 @@ var commands = {
           }
         })
         .then(function (files) {
+          if (!files || !files.length) {
+            return;
+          }
+
           files.forEach(function (file) {
             var content = file.content.join('\n');
             fs.writeFileSync(path.join(dir, file.name), content);
@@ -71,7 +59,38 @@ var commands = {
 
           console.info(pluralize('file', files.length, true) + ' extracted');
         });
-    }
+      }
+    },
+
+  'compress': function (args) {
+    var pattern = args[0];
+    var output = args[1];
+
+    var globPattern = /\*|\?|\!|\+|\[/;
+
+    promise.resolve(globPattern.test(pattern))
+      .then(function (isGlob) {
+        var fn = scripts.globDirAsync;
+
+        if (!isGlob) {
+          var stat = fs.statSync(pattern);
+
+          if (!stat.isFile() && stat.isDirectory()) {
+            fn = scripts.readDirAsync;
+          }
+        }
+
+        return fn(pattern);
+      })
+      .then(scripts.filesToDocAsync)
+      .then(packdown.write)
+      .then(function (doc) {
+        if (!output) {
+          console.log(doc);
+        } else {
+          fs.writeFileSync(output, doc);
+        }
+      });
   },
 
   'version': function () {
@@ -84,9 +103,9 @@ if (!argv._.length) {
   process.exit(0);
 } else {
   switch(argv._[0]) {
-    case 'read':
     case 'version':
     case 'extract':
+    case 'compress':
       commands[argv._[0]](argv._.slice(1));
     break;
     default:
