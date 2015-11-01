@@ -50,15 +50,18 @@
   "homepage": "https://github.com/imsky/packdown",
   "dependencies": {
     "base-64": "^0.1.0",
+    "bluebird": "^2.10.0",
+    "glob": "^5.0.15",
     "json-stable-stringify": "^1.0.0",
     "nearley": "^1.6.2",
     "pluralize": "^1.2.1",
+    "shelljs": "^0.5.3",
     "utf8": "^2.1.1",
+    "walk": "^2.3.9",
     "yargs": "^3.27.0"
   },
   "devDependencies": {
     "blanket": "^1.1.7",
-    "bluebird": "^2.10.0",
     "browserify": "^11.1.0",
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
@@ -68,8 +71,6 @@
     "jsfmt": "^0.5.0",
     "jsonfile": "^2.2.2",
     "mocha": "^2.3.2",
-    "shelljs": "^0.5.3",
-    "uglify-js": "^2.4.24",
-    "walk": "^2.3.9"
+    "uglify-js": "^2.4.24"
   }
 }
