@@ -6,9 +6,13 @@ Packdown stores files in a Markdown document.
 
 * [npm](https://www.npmjs.com/package/packdownjs): `npm install packdownjs`
 
-## About
+## What is Packdown?
 
-Packdown is a subset of Markdown, which means it can be rendered by most Markdown libraries, especially [CommonMark](http://commonmark.org/)-compatible ones. This makes it versatile as both a storage format and a presentation format.
+Packdown is a document format, a library, and a CLI tool that helps pack many files into one. Unlike zip, 7z, tar, or other archive formats, Packdown is human-readable and editable. It's a subset of Markdown so it's widely supported out of the box. Finally, every file in a Packdown document can be annotated, so instructions and explanations can be stored alongside the files they apply to.
+
+Packdown can be used for tutorials, boilerplate, configuration templates, literate programming, code snippets, and tons more. It's extensible and works in the browser and on the command line.
+
+## Structure
 
 The structure of a Packdown document is as follows:
 
@@ -17,6 +21,7 @@ The structure of a Packdown document is as follows:
   * Path of the file
   * File info
   * File contents in a code block
+* Optional comment with Packdown version metadata
 
 ## Example
 

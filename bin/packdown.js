@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+//todo: overwrite existing files preserving descriptions
+//todo: extract from directory of packdown files
+//todo: usage
+//todo: commander.js
+//todo: mustache template
+
 var path = require('path');
 var fs = require('fs');
 
@@ -29,12 +35,13 @@ var commands = {
     var file = args[0];
     var dir = args[1];
 
-    if (!file || !dir) {
-      throw Error('Input file or output directory is missing');
+    if (!file) {
+      throw Error('Input file is missing');
+    } else if(!dir) {
+      throw Error('Output directory is missing');
     } else {
       mkdir('-p', dir);
 
-      //todo: read directory case
       fs.readFileAsync(file)
         .then(function (contents) {
           return new Buffer(contents).toString('utf8')
@@ -109,7 +116,6 @@ if (!argv._.length) {
       commands[argv._[0]](argv._.slice(1));
     break;
     default:
-      //todo: show usage
       console.error('Not implemented');
       process.exit(1);
     break;
