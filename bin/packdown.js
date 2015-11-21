@@ -1,20 +1,13 @@
 #!/usr/bin/env node
 
-//todo: overwrite existing files preserving descriptions
-//todo: extract from directory of packdown files
-//todo: usage
-//todo: commander.js
-//todo: mustache template
-
 var path = require('path');
 var fs = require('fs');
 
 require('shelljs/global');
 
-var stringify = require('json-stable-stringify')
 var promise = require('bluebird');
 var pluralize = require('pluralize');
-var yargs = require('yargs');
+var program = require('commander');
 
 var scripts = require('../scripts');
 var packdown = require('../index');
@@ -22,102 +15,74 @@ var packdown = require('../index');
 promise.promisifyAll(fs);
 promise.promisifyAll(scripts);
 
-var argv = yargs.argv;
+program.version(packdown.version.packageVersion);
 
-function log (obj) {
-  console.log(stringify(obj, {
-    'space': 2
-  }));
-}
+//todo: patch command
+//todo: validate command
 
-var commands = {
-  'extract': function (args) {
-    var file = args[0];
-    var dir = args[1];
+program
+  .command('compress <input> [output]')
+  .alias('c')
+  .description('create Packdown doc from <input> directory and optionally write it to [output]')
+  .action(function (input, output) {
+    var stat = fs.statSync(input);
 
-    if (!file) {
-      throw Error('Input file is missing');
-    } else if(!dir) {
-      throw Error('Output directory is missing');
+    if (input === '.' || input === './') {
+      input = process.cwd();
+    }
+
+    if (!stat.isFile() && stat.isDirectory()) {
+      promise.resolve(scripts.readDirAsync(input))
+        .then(scripts.filesToDocAsync)
+        .then(packdown.write)
+        .then(function (doc) {
+          if (!output) {
+            console.log(doc);
+          } else {
+            fs.writeFileSync(output, doc);
+          }
+        });
     } else {
-      mkdir('-p', dir);
+      throw Error('Not a directory:' + input);
+    }
+  });
 
-      fs.readFileAsync(file)
+//todo: add verbose option
+//todo: add stdin
+//todo: extract from directory of packdown files
+//todo: extract individual file
+program
+  .command('extract <input> <output>')
+  .alias('e')
+  .description('extract <input> Packdown doc into <output> directory')
+  .action(function (input, output) {
+      mkdir('-p', output);
+
+      fs.readFileAsync(input)
         .then(function (contents) {
-          return new Buffer(contents).toString('utf8')
+          return new Buffer(contents).toString('utf8');
         })
         .then(packdown.read)
         .then(function (doc) {
           if (doc.files.length) {
             return doc.files;
           } else {
-            throw Error('No files embedded in document');
+            throw Error('No files in document');
           }
         })
         .then(function (files) {
-          if (!files || !files.length) {
-            return;
+          var filesExtracted = 0;
+
+          if (files && files.length) {
+            files.forEach(function (file) {
+              var content = file.content.join('\n');
+              fs.writeFileSync(path.join(output, file.name), content);
+              filesExtracted++;
+            });
           }
 
-          files.forEach(function (file) {
-            var content = file.content.join('\n');
-            fs.writeFileSync(path.join(dir, file.name), content);
-          });
-
-          console.info(pluralize('file', files.length, true) + ' extracted');
+          console.info(pluralize('file', filesExtracted, true) + ' extracted');
         });
-      }
-    },
+  });
 
-  'compress': function (args) {
-    var pattern = args[0];
-    var output = args[1];
-
-    var globPattern = /\*|\?|\!|\+|\[/;
-
-    promise.resolve(globPattern.test(pattern))
-      .then(function (isGlob) {
-        var fn = scripts.globDirAsync;
-
-        if (!isGlob) {
-          var stat = fs.statSync(pattern);
-
-          if (!stat.isFile() && stat.isDirectory()) {
-            fn = scripts.readDirAsync;
-          }
-        }
-
-        return fn(pattern);
-      })
-      .then(scripts.filesToDocAsync)
-      .then(packdown.write)
-      .then(function (doc) {
-        if (!output) {
-          console.log(doc);
-        } else {
-          fs.writeFileSync(output, doc);
-        }
-      });
-  },
-
-  'version': function () {
-    log(packdown.version);
-  }
-};
-
-if (!argv._.length) {
-  console.log('Usage: packdown read <file.packdown>');
-  process.exit(0);
-} else {
-  switch(argv._[0]) {
-    case 'version':
-    case 'extract':
-    case 'compress':
-      commands[argv._[0]](argv._.slice(1));
-    break;
-    default:
-      console.error('Not implemented');
-      process.exit(1);
-    break;
-  }
-}
+program.parse(process.argv);

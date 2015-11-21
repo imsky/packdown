@@ -51,6 +51,7 @@
   "dependencies": {
     "base-64": "^0.1.0",
     "bluebird": "^2.10.0",
+    "commander": "^2.9.0",
     "glob": "^5.0.15",
     "json-stable-stringify": "^1.0.0",
     "nearley": "^1.6.2",
