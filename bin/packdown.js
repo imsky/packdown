@@ -19,6 +19,8 @@ program.version(packdown.version.packageVersion);
 
 //todo: patch command
 //todo: validate command
+//todo: extract metadata
+//todo: compress metadata
 
 program
   .command('compress <input> [output]')

@@ -89,6 +89,7 @@ describe('Packdown Writer', function () {
         var diffLines = diff.diffLines(output, ref);
 
         if (diffLines.length > 1) {
+          console.error(diffLines);
           throw Error('Output and reference are different');
         }
       });
