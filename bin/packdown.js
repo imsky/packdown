@@ -17,14 +17,12 @@ promise.promisifyAll(scripts);
 
 program.version(packdown.version.packageVersion);
 
-//todo: patch command
 //todo: validate command
 //todo: extract metadata
 //todo: compress metadata
 
 program
   .command('compress <input> [output]')
-  .alias('c')
   .description('create Packdown doc from <input> directory and optionally write it to [output]')
   .action(function (input, output) {
     var stat = fs.statSync(input);
@@ -55,7 +53,6 @@ program
 //todo: extract individual file
 program
   .command('extract <input> <output>')
-  .alias('e')
   .description('extract <input> Packdown doc into <output> directory')
   .action(function (input, output) {
       mkdir('-p', output);
@@ -87,4 +84,29 @@ program
         });
   });
 
+
+program
+  //todo: variadic support
+  .command('add <document> <file>')
+  .description('add <file> to <document>')
+  .action(function (document, file) {
+    //does document exist
+    //does file exist
+    //read document
+    //read file
+    //add file using add() API method
+    //write new packdown file
+  });
+
+program
+  .command('remove <document> <path>')
+  .description('remove file at <path> from <document>')
+  .action(function (document, file) {
+    //does document exist
+    //does file exist
+    //read document
+    //read file
+    //remove file using remove() API method
+    //write new packdown file
+  });
 program.parse(process.argv);
