@@ -14,7 +14,6 @@
     "packdown": "./bin/packdown.js"
   },
   "scripts": {
-    "test": "mocha test/**/*-test.js",
     "nearley": "nearleyc lib/packdown.ne -o lib/grammar.js",
     "browserify": "browserify -s Packdown index.js -o packdown.js",
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
@@ -22,8 +21,8 @@
     "lint": "eslint lib/**/*.js",
     "coverage": "mocha test/**/*-test.js --require blanket -R html-cov > coverage.html",
     "quality": "npm run format && npm run lint",
-    "banner": "shjs scripts/banner",
-    "prebuild": "node scripts/packdown-version && npm run nearley",
+    "banner": "node build/banner",
+    "prebuild": "node build/version && npm run nearley",
     "build": "npm run quality && npm run browserify && npm test",
     "postbuild": "npm run uglify && npm run banner",
     "prepublish": "npm run build"
@@ -66,7 +65,6 @@
     "browserify": "^11.1.0",
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
-    "del": "^2.0.2",
     "diff": "^2.1.1",
     "eslint": "^1.5.0",
     "jsfmt": "^0.5.0",
