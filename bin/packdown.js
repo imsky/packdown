@@ -9,8 +9,9 @@ var promise = require('bluebird');
 var pluralize = require('pluralize');
 var program = require('commander');
 
-var scripts = require('../scripts');
+var scripts = {};
 var packdown = require('../index');
+var compress = require('../lib/commands/compress');
 
 promise.promisifyAll(fs);
 promise.promisifyAll(scripts);
@@ -23,7 +24,8 @@ program.version(packdown.version.packageVersion);
 
 program
   .command('compress <input> [output]')
-  .description('create Packdown doc from <input> directory and optionally write it to [output]');
+  .description('create Packdown doc from <input> directory and optionally write it to [output]')
+  .action(compress);
 
 //todo: add verbose option
 //todo: add stdin
