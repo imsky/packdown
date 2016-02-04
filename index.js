@@ -4,6 +4,7 @@ var writer = require('./lib/writer');
 var reader = require('./lib/reader');
 var add = require('./lib/add');
 var remove = require('./lib/remove');
+var filesToDoc = require('./lib/files-to-doc');
 
 var versionInfo = function () {
   return {
@@ -26,6 +27,10 @@ exports.add = function (document, file) {
 
 exports.remove = function (document, path) {
   return remove(document, path);
+};
+
+exports.filesToDoc = function (files) {
+  return filesToDoc(files);
 };
 
 exports.version = versionInfo();
