@@ -9,8 +9,9 @@ var promise = require('bluebird');
 var pluralize = require('pluralize');
 var program = require('commander');
 
-var scripts = require('../scripts');
+var scripts = {};
 var packdown = require('../index');
+var compress = require('../lib/commands/compress');
 
 promise.promisifyAll(fs);
 promise.promisifyAll(scripts);
@@ -24,28 +25,7 @@ program.version(packdown.version.packageVersion);
 program
   .command('compress <input> [output]')
   .description('create Packdown doc from <input> directory and optionally write it to [output]')
-  .action(function (input, output) {
-    var stat = fs.statSync(input);
-
-    if (input === '.' || input === './') {
-      input = process.cwd();
-    }
-
-    if (!stat.isFile() && stat.isDirectory()) {
-      promise.resolve(scripts.readDirAsync(input))
-        .then(scripts.filesToDocAsync)
-        .then(packdown.write)
-        .then(function (doc) {
-          if (!output) {
-            console.log(doc);
-          } else {
-            fs.writeFileSync(output, doc);
-          }
-        });
-    } else {
-      throw Error('Not a directory:' + input);
-    }
-  });
+  .action(compress);
 
 //todo: add verbose option
 //todo: add stdin
