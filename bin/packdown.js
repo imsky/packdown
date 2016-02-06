@@ -25,7 +25,14 @@ program.version(packdown.version.packageVersion);
 program
   .command('compress <input> [output]')
   .description('create Packdown doc from <input> directory and optionally write it to [output]')
-  .action(compress);
+  .action(function (input, output) {
+    compress(input, output)
+      .then(function (display) {
+        if (display) {
+          console.log(display);
+        }
+      });
+  });
 
 //todo: add verbose option
 //todo: add stdin
@@ -89,4 +96,9 @@ program
     //remove file using remove() API method
     //write new packdown file
   });
+
 program.parse(process.argv);
+
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}
