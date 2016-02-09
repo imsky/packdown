@@ -2,6 +2,7 @@
 # qkst.io/dotfiles/gitignore
 
 packdown*.js
+coverage
 
 # JavaScript
 node_modules/
