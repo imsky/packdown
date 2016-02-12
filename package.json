@@ -14,14 +14,15 @@
     "packdown": "./bin/packdown.js"
   },
   "scripts": {
-    "test": "istanbul cover _mocha -- --bail lib/**/*-test.js",
+    "testdir": "rm -rf /tmp/packdown-test; mkdir /tmp/packdown-test",
+    "test": "npm run testdir; istanbul cover _mocha -- --bail './lib/**/*-test.js'",
     "nearley": "nearleyc lib/packdown.ne -o lib/grammar.js",
     "browserify": "browserify -s Packdown index.js -o packdown.js",
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
     "format": "jsfmt --write -v lib",
     "lint": "eslint lib/**/*.js bin/*.js",
     "coverage": "mocha test/**/*-test.js --require blanket -R html-cov > coverage.html",
-    "quality": "npm run format && npm run lint",
+    "quality": "npm run format && npm run lint && npm run test",
     "banner": "node build/banner",
     "prebuild": "node build/version && npm run nearley",
     "build": "npm run quality && npm run browserify",

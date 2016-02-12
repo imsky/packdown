@@ -2,6 +2,8 @@
 
 Packdown stores files in a Markdown document.
 
+[![Build Status](https://travis-ci.org/imsky/packdown.svg?branch=master)](https://travis-ci.org/imsky/packdown)
+
 ## Installing
 
 * [npm](https://www.npmjs.com/package/packdownjs): `npm install packdownjs`
