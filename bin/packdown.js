@@ -9,12 +9,11 @@ var promise = require('bluebird');
 var pluralize = require('pluralize');
 var program = require('commander');
 
-var scripts = {};
 var packdown = require('../index');
 var compress = require('../lib/commands/compress');
+var extract = require('../lib/commands/extract');
 
 promise.promisifyAll(fs);
-promise.promisifyAll(scripts);
 
 program.version(packdown.version.packageVersion);
 
@@ -24,14 +23,10 @@ program.version(packdown.version.packageVersion);
 
 program
   .command('compress <input> [output]')
-  .description('create Packdown doc from <input> directory and optionally write it to [output]')
+  .description('compress <input> and save to [output]')
   .action(function (input, output) {
     compress(input, output)
-      .then(function (display) {
-        if (display) {
-          console.log(display);
-        }
-      });
+      .then(console.log);
   });
 
 //todo: add verbose option
@@ -42,33 +37,10 @@ program
   .command('extract <input> <output>')
   .description('extract <input> Packdown doc into <output> directory')
   .action(function (input, output) {
-      mkdir('-p', output);
-
-      fs.readFileAsync(input)
-        .then(function (contents) {
-          return new Buffer(contents).toString('utf8');
-        })
-        .then(packdown.read)
-        .then(function (doc) {
-          if (doc.files.length) {
-            return doc.files;
-          } else {
-            throw Error('No files in document');
-          }
-        })
-        .then(function (files) {
-          var filesExtracted = 0;
-
-          if (files && files.length) {
-            files.forEach(function (file) {
-              var content = file.content.join('\n');
-              fs.writeFileSync(path.join(output, file.name), content);
-              filesExtracted++;
-            });
-          }
-
-          console.info(pluralize('file', filesExtracted, true) + ' extracted');
-        });
+    extract(input, output)
+      .then(function (files) {
+        console.log(pluralize('file', files.length, true) + ' extracted');
+      });
   });
 
 

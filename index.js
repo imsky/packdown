@@ -1,4 +1,4 @@
-var metadata = require('./packdown-metadata');
+var version = require('./lib/version');
 
 var writer = require('./lib/writer');
 var reader = require('./lib/reader');
@@ -6,15 +6,8 @@ var add = require('./lib/add');
 var remove = require('./lib/remove');
 var filesToDoc = require('./lib/files-to-doc');
 
-var versionInfo = function () {
-  return {
-    'packageVersion': metadata.packageVersion,
-    'formatVersion': metadata.formatVersion
-  };
-};
-
 exports.write = function (document) {
-  return writer(document, versionInfo());
+  return writer(document);
 };
 
 exports.read = function (document) {
@@ -33,4 +26,4 @@ exports.filesToDoc = function (files) {
   return filesToDoc(files);
 };
 
-exports.version = versionInfo();
+exports.version = version;

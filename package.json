@@ -26,8 +26,7 @@
     "banner": "node build/banner",
     "prebuild": "node build/version && npm run nearley",
     "build": "npm run quality && npm run browserify",
-    "postbuild": "npm run uglify && npm run banner",
-    "prepublish": "npm run build"
+    "postbuild": "npm run uglify && npm run banner"
   },
   "config": {
     "blanket": {
