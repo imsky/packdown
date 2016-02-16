@@ -39,16 +39,6 @@ Hello world
 &#96;&#96;&#96;
 </pre>
 
-## API
-
-### write(document)
-
-### read(document)
-
-### add(document, file)
-
-### remove(document, path)
-
 ## Command line usage
 
 ```
