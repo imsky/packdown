@@ -3,6 +3,7 @@
 Packdown stores files in a Markdown document.
 
 [![Build Status](https://travis-ci.org/imsky/packdown.svg?branch=master)](https://travis-ci.org/imsky/packdown)
+[![codecov.io](https://codecov.io/github/imsky/packdown/coverage.svg?branch=master)](https://codecov.io/github/imsky/packdown?branch=master)
 
 ## Installing
 
