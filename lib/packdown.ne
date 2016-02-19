@@ -48,8 +48,8 @@ FileBlock ->
       } %}
 
 FileHeader ->
-    "## " PathText "\n"
-      {% function (d) { return d[1]; } %}
+    ATXHeader " /" PathText "\n"
+      {% function (d) { return d[2]; } %}
 
 FileInfo -> 
     SafeBlock
@@ -95,12 +95,12 @@ SafeLine ->
 DocSafeBlock ->
     DocSafeLine:* {% id %}
 
-# lines that are safe in document context - text only or h3+ headings
+# lines that are safe in document context
 DocSafeLine ->
     .:* "\n"
       {% function (d, l, reject) {
         var line = d[0].join('');
-        if (line[0] === '#' && !line.match(/^#{3,}/)) return reject;
+        if (line[0] === '#' && line.match(/^#{2,} \//)) return reject;
         return line;
       } %}
 
@@ -112,6 +112,15 @@ PathText ->
 
 SemVer ->
     int "." int "." int {% JOIN %}
+
+ATXHeader ->
+    "#":+
+      {% function (d, l, reject) {
+        var line = d[0].join('');
+        if (line.length > 6) return reject;
+        return line;
+      }
+      %}
 
 int ->
     [0-9]:+ {% IDJOIN %}

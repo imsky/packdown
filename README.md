@@ -33,7 +33,7 @@ The structure of a Packdown document is as follows:
 
 This is an example Packdown document. This block supports &#42;&#42;Markdown&#42;&#42;.
 
-&#35;&#35; file.txt
+&#35;&#35;&#35; /file.txt
 
 &#96;&#96;&#96;txt
 Hello world
@@ -48,21 +48,13 @@ Usage: packdown [options] [command]
 
 Commands:
 
-  compress|c <input> [output]  create Packdown doc from <input> directory and optionally write it to [output]
-  extract|e <input> <output>   extract <input> Packdown doc into <output> directory
+  compress <input> [output]  compress <input> and save to [output]
+  extract <input> <output>   extract <input> Packdown doc into <output> directory
 
 Options:
 
   -h, --help     output usage information
   -V, --version  output the version number
-```
-
-### Examples
-
-```
-packdown compress docs docs.md
-packdown c docs > docs.md
-packdown extract docs.md example
 ```
 
 ## License
