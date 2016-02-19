@@ -21,7 +21,7 @@
     "browserify": "browserify -s Packdown index.js -o packdown.js",
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
     "format": "jsfmt --write -v lib",
-    "lint": "eslint lib/**/*.js bin/*.js",
+    "lint": "eslint lib/*.js lib/commands/*.js bin/*.js",
     "coverage": "mocha test/**/*-test.js --require blanket -R html-cov > coverage.html",
     "quality": "npm run format && npm run lint && npm run test",
     "banner": "node build/banner",
@@ -75,7 +75,6 @@
     "istanbul": "^0.4.2",
     "jsfmt": "^0.5.0",
     "jsonfile": "^2.2.2",
-    "line-diff": "^1.2.1",
     "mocha": "^2.4.5",
     "uglify-js": "^2.4.24"
   }
