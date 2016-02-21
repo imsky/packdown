@@ -7,7 +7,7 @@ Packdown stores files in a Markdown document.
 
 ## Installing
 
-* [npm](https://www.npmjs.com/package/packdownjs): `npm install packdownjs`
+* [npm](https://www.npmjs.com/package/packdownjs): `npm install -g packdownjs`
 
 ## What is Packdown?
 
