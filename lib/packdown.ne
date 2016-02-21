@@ -61,7 +61,7 @@ FileInfo ->
       } %}
 
 CodeBlock ->
-    CodeBlockStart SafeBlock "```"
+    CodeBlockStart SafeBlock "```" "\n"
       {% function (d) {
         return {
           'tag': d[0],

@@ -7,6 +7,7 @@ var remove = require('./lib/remove');
 var filesToDoc = require('./lib/files-to-doc');
 
 exports.write = function (document) {
+  //todo: validate document object
   return writer(document);
 };
 
