@@ -5,7 +5,7 @@ var asPromised = require('chai-as-promised');
 chai.should();
 chai.use(asPromised);
 
-var compress = require('../compress');
+var compress = require('../lib/commands/compress');
 
 describe('Compress', function () {
   it('works with valid basic example', function () {

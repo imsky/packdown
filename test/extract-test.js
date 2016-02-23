@@ -5,7 +5,7 @@ var asPromised = require('chai-as-promised');
 chai.should();
 chai.use(asPromised);
 
-var extract = require('../extract');
+var extract = require('../lib/commands/extract');
 
 describe('Extract', function () {
   it('works with valid basic example', function () {

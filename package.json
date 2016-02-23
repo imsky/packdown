@@ -15,7 +15,7 @@
   },
   "scripts": {
     "testdir": "rm -rf /tmp/packdown-test; mkdir /tmp/packdown-test",
-    "test": "npm run testdir; istanbul cover _mocha -- --bail './lib/**/*-test.js'",
+    "test": "npm run testdir; istanbul cover _mocha -- --bail './test/**/*-test.js'",
     "codecov": "codecov",
     "nearley": "nearleyc lib/packdown.ne -o lib/grammar.js",
     "browserify": "browserify -s Packdown index.js -o packdown.js",
@@ -27,16 +27,6 @@
     "prebuild": "node tools/version && npm run nearley",
     "build": "npm run quality && npm run browserify",
     "postbuild": "npm run uglify && npm run banner"
-  },
-  "config": {
-    "blanket": {
-      "pattern": [
-        "lib"
-      ],
-      "data-cover-never": [
-        "node_modules"
-      ]
-    }
   },
   "keywords": [
     "markdown",
