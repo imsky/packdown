@@ -1,0 +1,9 @@
+{
+  "name": "Basic document",
+  "files": [
+    {
+      "name": "hello",
+      "content": "world"
+    }
+  ]
+}

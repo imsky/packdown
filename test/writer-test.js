@@ -1,10 +1,19 @@
+var fs = require('fs');
+
 var chai = require('chai');
 chai.should();
 
 var writer = require('../lib/writer');
+var basicDocument = require('./docs/basic.json');
 
 describe('Writer', function () {
-  it('should write a basic document');
+  it('should write a basic document', function () {
+    var output = writer(basicDocument);
+
+    var expected = fs.readFileSync(__dirname + '/docs/basic.md', 'utf8');
+
+    output.should.equal(expected);
+  });
 
   it('should fail with invalid file list', function () {
     (function () {
@@ -33,6 +42,4 @@ describe('Writer', function () {
       });
     }).should.throw();
   });
-
-  it('should fail with invalid file encoding');
 });
