@@ -1,9 +1,11 @@
 {
   "name": "Basic document",
+  "info": "Packdown demo",
   "files": [
     {
-      "name": "hello",
-      "content": "world"
+      "name": "hello world",
+      "info": "foo",
+      "content": "bar"
     }
   ]
 }
