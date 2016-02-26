@@ -33,6 +33,15 @@ describe('Writer', function () {
     }).should.throw();
   });
 
+  it('should fail with invalid files', function () {
+    (function () {
+      writer({
+        'files': [{'name': 'space space'}],
+        'name': 'File with spaces'
+      });
+    }).should.throw();
+  });
+
   it('should fail with a missing document name', function () {
     (function () {
       writer({
