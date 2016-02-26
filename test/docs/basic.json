@@ -3,9 +3,9 @@
   "info": "Packdown demo",
   "files": [
     {
-      "name": "hello world",
-      "info": "foo",
-      "content": "bar"
+      "name": "hello-world",
+      "info": "simple file",
+      "content": "foo\nbar"
     }
   ]
 }
