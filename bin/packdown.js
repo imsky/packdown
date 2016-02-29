@@ -29,14 +29,36 @@ program
   .command('extract <input> <output>')
   .description('extract <input> Packdown doc into <output> directory')
   .action(function (input, output) {
-    extract(input, output)
+    function action (input, output) {
+      extract(input, output)
       .then(function (files) {
         console.log(pluralize('file', files.length, true) + ' extracted');
       });
+    }
+
+    if (input === '-' && !process.stdin.isTTY) {
+      var stdin = process.stdin;
+      var input = [];
+
+      stdin.on('readable', function () {
+        var buffer = this.read();
+
+        if (buffer) {
+          input.push(buffer);
+        }
+      });
+
+      stdin.on('end', function () {
+        input = Buffer.concat(input);
+        action(input, output);
+      });
+    } else {
+      action(input, output);
+    }
   });
 
-program.parse(process.argv);
-
-if (!process.argv.slice(2).length) {
+if (process.argv.slice(2).length) {
+  program.parse(process.argv);
+} else {
   program.outputHelp();
 }
