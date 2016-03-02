@@ -12,6 +12,7 @@ var program = require('commander');
 var packdown = require('../index');
 var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
+var add = require('../lib/commands/add');
 
 promise.promisifyAll(fs);
 
@@ -21,8 +22,7 @@ program
   .command('compress <input> [output]')
   .description('compress <input> and save to [output]')
   .action(function (input, output) {
-    compress(input, output)
-      .then(console.log);
+    compress(input, output).tap(console.log);
   });
 
 program
@@ -55,6 +55,13 @@ program
     } else {
       action(input, output);
     }
+  });
+
+program
+  .command('add <file> <document>')
+  .description('add <file> to Packdown <document>')
+  .action(function (file, document) {
+    add(file, document).tap(console.log);
   });
 
 if (process.argv.slice(2).length) {
