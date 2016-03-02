@@ -8,4 +8,4 @@ simple file
     bar
 ```
 
-<!-- packdown-1-0.4.0 -->
+<!-- packdown-1-0.5.0 -->
