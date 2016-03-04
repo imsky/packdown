@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-var path = require('path');
 var fs = require('fs');
 
 require('shelljs/global');
@@ -22,6 +21,7 @@ program
   .command('compress <input> [output]')
   .description('compress <input> and save to [output]')
   .action(function (input, output) {
+    //todo: read files/validate stat within action
     compress(input, output).tap(console.log);
   });
 
@@ -29,6 +29,8 @@ program
   .command('extract <input> <output>')
   .description('extract <input> Packdown doc into <output> directory')
   .action(function (input, output) {
+    //todo: read files/validate stat within action
+
     function action (input, output) {
       extract(input, output)
       .then(function (files) {
@@ -61,7 +63,17 @@ program
   .command('add <file> <document>')
   .description('add <file> to Packdown <document>')
   .action(function (file, document) {
-    add(file, document).tap(console.log);
+    //todo: read files/validate stat within action
+    add(file, document)
+      .then(function (res) {
+        if (res.status === 'added') {
+          console.log(file + ' added');
+        } else if (res.status === 'replaced') {
+          console.log(file + ' replaced');
+        }
+
+        fs.writeFileSync(document, res.output);
+      });
   });
 
 if (process.argv.slice(2).length) {
