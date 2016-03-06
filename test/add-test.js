@@ -10,8 +10,34 @@ var addCommand = require('../lib/commands/add');
 var reader = require('../lib/reader');
 
 describe('Add function', function () {
-  it('adds a file correctly');
-  it('replaces a file correctly');
+  var packdownDoc;
+  var exampleFile;
+
+  it('adds a file correctly', function () {
+    var basicDocument = fs.readFileSync(__dirname + '/docs/basic.md');
+    var file = fs.readFileSync(__dirname + '/files/example/hello-world.txt', 'utf8');
+
+    exampleFile = {
+      'name': 'new-file',
+      'content': file
+    };
+
+    packdownDoc = reader(basicDocument);
+
+    packdownDoc.files.length.should.equal(1);
+
+    addFunction(packdownDoc, exampleFile);
+
+    packdownDoc.files.length.should.equal(2);
+  });
+
+  it('replaces a file correctly', function () {
+    packdownDoc.files.length.should.equal(2);
+
+    var result = addFunction(packdownDoc, exampleFile);
+
+    result.name.should.equal('new-file');
+  });
 });
 
 describe('Add command', function () {

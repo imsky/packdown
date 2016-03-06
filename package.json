@@ -14,8 +14,8 @@
     "packdown": "./bin/packdown.js"
   },
   "scripts": {
-    "testdir": "rm -rf /tmp/packdown-test; mkdir /tmp/packdown-test",
-    "test": "npm run testdir; istanbul cover _mocha -- --bail './test/**/*-test.js'",
+    "pretest": "rm -rf /tmp/packdown-test; mkdir /tmp/packdown-test",
+    "test": "istanbul cover _mocha -- --bail './test/**/*-test.js'",
     "codecov": "codecov",
     "nearley": "nearleyc lib/packdown.ne -o lib/grammar.js",
     "browserify": "browserify -s Packdown index.js -o packdown.js",
