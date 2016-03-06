@@ -13,6 +13,8 @@ var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
 var add = require('../lib/commands/add');
 
+var utilities = require('./utilities');
+
 promise.promisifyAll(fs);
 
 program.version(packdown.version.packageVersion);
@@ -63,8 +65,10 @@ program
   .command('add <file> <document>')
   .description('add <file> to Packdown <document>')
   .action(function (file, document) {
-    //todo: read files/validate stat within action
-    add(file, document)
+    var fileObj = utilities.getFile(file);
+    var documentObj = utilities.getFile(document);
+
+    add(fileObj, documentObj)
       .then(function (res) {
         if (res.status === 'added') {
           console.log(file + ' added');
@@ -72,7 +76,7 @@ program
           console.log(file + ' replaced');
         }
 
-        fs.writeFileSync(document, res.output);
+        utilities.putFile(document, res.output);
       });
   });
 
