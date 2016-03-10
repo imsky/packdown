@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 
 exports.checkFile = function (file) {
   var stat = fs.statSync(file);
@@ -10,9 +11,13 @@ exports.checkFile = function (file) {
 };
 
 exports.getFile = function (file) {
-  exports.checkFile(file);
+  var stat = exports.checkFile(file);
+  var props = path.parse(file);
+
   return {
     'path': file,
+    'stat': stat,
+    'props': props,
     'content': fs.readFileSync(file, 'utf8')
   };
 };

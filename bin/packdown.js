@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var fs = require('fs');
+var path = require('path');
 
 require('shelljs/global');
 
@@ -12,6 +13,7 @@ var packdown = require('../index');
 var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
 var add = require('../lib/commands/add');
+var remove = require('../lib/commands/remove');
 
 var utilities = require('./utilities');
 
@@ -28,16 +30,29 @@ program
   });
 
 program
-  .command('extract <input> <output>')
-  .description('extract <input> Packdown doc into <output> directory')
+  .command('extract <input> [output]')
+  .description('extract <input> Packdown doc into [output] directory')
   .action(function (input, output) {
-    //todo: read files/validate stat within action
+    var outputUndefined = typeof output === 'undefined';
 
-    function action (input, output) {
-      extract(input, output)
-      .then(function (files) {
-        console.log(pluralize('file', files.length, true) + ' extracted');
-      });
+    function action (inputFile, outputDir) {
+      mkdir('-p', outputDir);
+
+      extract(inputFile, outputDir)
+        .then(function (files) {
+          var extracted = 0;
+
+          files.forEach(function (file) {
+            try {
+              fs.writeFileSync(path.join(outputDir, file.name), file.content);
+              extracted++;
+            } catch (e) {
+              console.error('Error extracting ' + file.name);
+            }
+          });
+
+          console.log(pluralize('file', extracted, true) + ' extracted');
+        });
     }
 
     if (input === '-' && !process.stdin.isTTY) {
@@ -54,10 +69,13 @@ program
 
       stdin.on('end', function () {
         input = Buffer.concat(input);
+        output = outputUndefined ? 'stdin' : output;
         action(input, output);
       });
     } else {
-      action(input, output);
+      var inputFile = utilities.getFile(input);
+      output = outputUndefined ? inputFile.props.name : output;
+      action(inputFile, output);
     }
   });
 
@@ -74,6 +92,24 @@ program
           console.log(file + ' added');
         } else if (res.status === 'replaced') {
           console.log(file + ' replaced');
+        }
+
+        utilities.putFile(document, res.output);
+      });
+  });
+
+program
+  .command('remove <file> <document>')
+  .description('remove <file> from Packdown <document>')
+  .action(function (file, document) {
+    var documentObj = utilities.getFile(document);
+
+    remove(file, documentObj)
+      .then(function (res) {
+        if (res.status === 'not found') {
+          console.log(file + ' not found');
+        } else if (res.status === 'removed') {
+          console.log(file + ' removed');
         }
 
         utilities.putFile(document, res.output);
