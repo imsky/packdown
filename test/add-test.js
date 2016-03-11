@@ -44,11 +44,24 @@ describe('Add command', function () {
   var addPromise;
   var addResult;
 
-  it('works with example document', function () {
-    var document = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
-    var file = fs.readFileSync(__dirname + '/files/example/hello-world.txt', 'utf8');
+  var document = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
+  var file = fs.readFileSync(__dirname + '/files/example/hello-world.txt', 'utf8');
 
-    addPromise = addCommand({
+  it('adds files correctly', function () {
+    return addCommand({
+      'path': 'new-file.xyz',
+      'content': file
+    }, {
+      'path': null,
+      'content': document
+    })
+      .then(function (res) {
+        res.status.should.equal('added');
+      });
+  });
+
+  it('replaces files correctly', function () {
+    return addCommand({
       'path': 'hello-world.txt',
       'content': file
     }, {

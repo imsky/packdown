@@ -9,7 +9,8 @@ var extract = require('../lib/commands/extract');
 
 describe('Extract', function () {
   it('works with valid basic example', function () {
-    return extract(__dirname + '/docs/example.md', '/tmp/packdown-test/example-docs')
+    var input = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
+    return extract(input)
       .then(function (res) {
         res.length.should.equal(2);
         res[0].should.have.property('name');
@@ -19,15 +20,8 @@ describe('Extract', function () {
       });
   });
 
-  it('fails with missing input file', function () {
-    return extract('__fake').should.eventually.be.rejected;
-  });
-
-  it('fails with invalid input file', function () {
-    return extract(__dirname + '/docs').should.eventually.be.rejected;
-  });
-
-  it('fails with invalid output', function () {
-    return extract(__dirname + '/docs/example.md').should.eventually.be.rejected;
+  it('works with a Buffer as input', function () {
+    var input = fs.readFileSync(__dirname + '/docs/example.md');
+    return extract(input);
   });
 });
