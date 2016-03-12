@@ -25,8 +25,15 @@ program
   .command('compress <input> [output]')
   .description('compress <input> and save to [output]')
   .action(function (input, output) {
-    //todo: read files/validate stat within action
-    compress(input, output).tap(console.log);
+    utilities.getDir(input)
+      .then(compress)
+      .then(function (res) {
+        if (output) {
+          utilities.putFile(output, res);
+        } else {
+          console.log(res);
+        }
+      });
   });
 
 program
@@ -38,13 +45,13 @@ program
     function action (inputFile, outputDir) {
       mkdir('-p', outputDir);
 
-      extract(inputFile, outputDir)
+      extract(inputFile)
         .then(function (files) {
           var extracted = 0;
 
           files.forEach(function (file) {
             try {
-              fs.writeFileSync(path.join(outputDir, file.name), file.content);
+              utilities.putFile(path.join(outputDir, file.name), file.content);
               extracted++;
             } catch (e) {
               console.error('Error extracting ' + file.name);
