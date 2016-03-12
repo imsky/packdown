@@ -51,4 +51,8 @@ describe('Writer', function () {
       });
     }).should.throw();
   });
+
+  it('should fail with invalid file content');
+
+  it('should fail with invalid file encoding');
 });

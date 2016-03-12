@@ -44,6 +44,7 @@
     "glob": "^5.0.15",
     "is-valid-path": "^0.1.1",
     "nearley": "^1.6.2",
+    "normalize-path": "^2.0.1",
     "pluralize": "^1.2.1",
     "recursive-readdir": "^1.3.0",
     "shelljs": "^0.5.3",
