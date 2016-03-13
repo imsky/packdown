@@ -11,20 +11,12 @@ exports.write = function (document) {
   return writer(document);
 };
 
-exports.read = function (document) {
-  return reader(document);
-};
+exports.read = reader;
 
-exports.add = function (document, file) {
-  return add(document, file);
-};
+exports.add = add;
 
-exports.remove = function (document, path) {
-  return remove(document, path);
-};
+exports.remove = remove;
 
-exports.filesToDoc = function (files) {
-  return filesToDoc(files);
-};
+exports.filesToDoc = filesToDoc;
 
 exports.version = version;

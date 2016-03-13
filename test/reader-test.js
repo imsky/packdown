@@ -21,4 +21,10 @@ describe('Reader', function () {
     var output = reader(edgeCaseDocument);
     output.files.length.should.equal(3);
   });
+
+  it('should fail with an invalid document', function () {
+    (function () {
+      reader('foobar');
+    }).should.throw(Error);
+  })
 });

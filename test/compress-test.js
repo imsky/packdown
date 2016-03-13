@@ -10,19 +10,29 @@ var compress = require('../lib/commands/compress');
 describe('Compress', function () {
   it('works with valid basic example', function () {
     var output = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
+    var baseDir = __dirname + '/files/example';
 
-    return compress(__dirname + '/files/example', '/tmp/packdown-test/example.md')
+    var files = [
+      {
+        'path': baseDir + '/hello-world.js'
+      },
+      {
+        'path': baseDir + '/hello-world.txt'
+      }
+    ];
+
+    files = files.map(function (file) {
+      file.content = fs.readFileSync(file.path, 'utf8');
+      return file;
+    })
+
+    return compress({
+      'root': baseDir,
+      'files': files
+    })
       .then(function (res) {
         res.should.equal(output);
       });
-  });
-
-  it('fails with an invalid output parameter', function () {
-    return compress(__dirname + '/files/example', '!@#').should.eventually.be.rejected;
-  });
-
-  it('fails with a single file as input', function () {
-    return compress(__dirname + '/files/example/hello-world.txt').should.eventually.be.rejected;
   });
 
   it('fails with no inputs', function () {
