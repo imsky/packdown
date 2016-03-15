@@ -3,7 +3,7 @@
 var fs = require('fs');
 var path = require('path');
 
-require('shelljs/global');
+var shell = require('shelljs');
 
 var promise = require('bluebird');
 var pluralize = require('pluralize');
@@ -43,7 +43,7 @@ program
     var outputUndefined = typeof output === 'undefined';
 
     function action (inputFile, outputDir) {
-      mkdir('-p', outputDir);
+      shell.mkdir('-p', outputDir);
 
       extract(inputFile)
         .then(function (files) {

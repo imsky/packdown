@@ -38,7 +38,7 @@ exports.getDir = function (dir) {
       return {
         'root': dir,
         'files': files
-      }
+      };
     });
 };
 
