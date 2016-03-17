@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var validPath = require('is-valid-path');
+var validPath = function () { return true };
 var promise = require('bluebird');
 var precursive = promise.promisify(require('recursive-readdir'));
 

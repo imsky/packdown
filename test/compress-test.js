@@ -35,7 +35,15 @@ describe('Compress', function () {
 
   it('works with files at multiple levels');
 
+  it('works when compressing the current directory', function () {
+    return compress('.');
+  });
+
   it('fails with no inputs', function () {
     return compress().should.eventually.be.rejected;
+  });
+
+  it('fails with bad inputs', function () {
+    return compress('files/hello-world.js').should.eventually.be.rejected;
   });
 });
