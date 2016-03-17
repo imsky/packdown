@@ -2,7 +2,6 @@
 
 Packdown - Markdown-based file container format
 Version 0.6.0
-Format Version 1
 (c) 2015-2016 Ivan Malopinsky - http://imsky.co
 
 License: MIT
