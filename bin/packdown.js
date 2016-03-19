@@ -87,18 +87,13 @@ program
   .command('add <file> <document>')
   .description('add <file> to Packdown <document>')
   .action(function (file, document) {
-    var fileObj = utilities.getFile(file);
-    var documentObj = utilities.getFile(document);
-
-    add(fileObj, documentObj)
+    add(file, document)
       .then(function (res) {
         if (res.status === 'added') {
           console.log(file + ' added');
         } else if (res.status === 'replaced') {
           console.log(file + ' replaced');
         }
-
-        utilities.putFile(document, res.output);
       });
   });
 

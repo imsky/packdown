@@ -8,6 +8,7 @@ chai.use(asPromised);
 
 var compress = require('../lib/commands/compress');
 
+//todo: factor these out into common file
 var exampleDoc = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
 var exampleFiles = {
   'files': {
@@ -31,6 +32,8 @@ describe('Compress', function () {
         output.should.equal(exampleDoc);
       });
   });
+
+  it('works with files at multiple levels');
 
   it('fails with no inputs', function () {
     return compress().should.eventually.be.rejected;

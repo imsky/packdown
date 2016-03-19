@@ -1,4 +1,5 @@
 var fs = require('fs');
+var mock = require('mock-fs');
 
 var chai = require('chai');
 var asPromised = require('chai-as-promised');
@@ -47,27 +48,25 @@ describe('Add command', function () {
   var document = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
   var file = fs.readFileSync(__dirname + '/files/example/hello-world.txt', 'utf8');
 
+  beforeEach(function () {
+    mock({
+      'new-file.xyz': file,
+      'hello-world.txt': file,
+      'example.md': document
+    });
+  });
+
+  afterEach(mock.restore);
+
   it('adds files correctly', function () {
-    return addCommand({
-      'path': 'new-file.xyz',
-      'content': file
-    }, {
-      'path': null,
-      'content': document
-    })
+    return addCommand('new-file.xyz', 'example.md')
       .then(function (res) {
         res.status.should.equal('added');
       });
   });
 
   it('replaces files correctly', function () {
-    return addCommand({
-      'path': 'hello-world.txt',
-      'content': file
-    }, {
-      'path': null,
-      'content': document
-    })
+    return addCommand('hello-world.txt', 'example.md')
       .then(function (res) {
         res.status.should.equal('replaced');
         addResult = res.output;
