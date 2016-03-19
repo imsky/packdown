@@ -25,12 +25,9 @@ program
   .command('compress <input> [output]')
   .description('compress <input> and save to [output]')
   .action(function (input, output) {
-    utilities.getDir(input)
-      .then(compress)
+    compress(input, output)
       .then(function (res) {
-        if (output) {
-          utilities.putFile(output, res);
-        } else {
+        if (!output) {
           console.log(res);
         }
       });
