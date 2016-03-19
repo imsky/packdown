@@ -101,17 +101,13 @@ program
   .command('remove <file> <document>')
   .description('remove <file> from Packdown <document>')
   .action(function (file, document) {
-    var documentObj = utilities.getFile(document);
-
-    remove(file, documentObj)
+    remove(file, document)
       .then(function (res) {
         if (res.status === 'not found') {
           console.log(file + ' not found');
         } else if (res.status === 'removed') {
           console.log(file + ' removed');
         }
-
-        utilities.putFile(document, res.output);
       });
   });
 

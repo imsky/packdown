@@ -1,4 +1,5 @@
 var fs = require('fs');
+var mock = require('mock-fs');
 
 var chai = require('chai');
 var asPromised = require('chai-as-promised');
@@ -36,19 +37,23 @@ describe('Remove command', function () {
 
   var document = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
 
+  beforeEach(function () {
+    mock({
+      'example.md': document
+    });
+  });
+
+  afterEach(mock.restore);
+
   it('removes a file correctly', function () {
-    return removeCommand('hello-world.js', {
-      'content': document
-    })
+    return removeCommand('hello-world.js', 'example.md')
       .then(function (res) {
         res.status.should.equal('removed');
       })
   });
 
   it('does not remove a file that does not exist', function () {
-    return removeCommand('foobar', {
-      'content': document
-    })
+    return removeCommand('foobar', 'example.md')
       .then(function (res) {
         res.status.should.equal('not found');
       })
