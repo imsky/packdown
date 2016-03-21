@@ -41,7 +41,6 @@
     "bluebird": "^2.10.0",
     "commander": "^2.9.0",
     "glob": "^5.0.15",
-    "is-valid-path": "^0.1.1",
     "nearley": "^1.6.2",
     "normalize-path": "^2.0.1",
     "pluralize": "^1.2.1",
