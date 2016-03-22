@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
 var fs = require('fs');
-var path = require('path');
-
-var shell = require('shelljs');
 
 var promise = require('bluebird');
 var pluralize = require('pluralize');
@@ -14,10 +11,6 @@ var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
 var add = require('../lib/commands/add');
 var remove = require('../lib/commands/remove');
-
-var utilities = require('./utilities');
-
-promise.promisifyAll(fs);
 
 program.version(packdown.version.packageVersion);
 
@@ -37,49 +30,30 @@ program
   .command('extract <input> [output]')
   .description('extract <input> Packdown doc into [output] directory')
   .action(function (input, output) {
-    var outputUndefined = typeof output === 'undefined';
-
-    function action (inputFile, outputDir) {
-      shell.mkdir('-p', outputDir);
-
-      extract(inputFile)
+    function action (_input, _output) {
+      extract(_input, _output)
         .then(function (files) {
-          var extracted = 0;
-
-          files.forEach(function (file) {
-            try {
-              utilities.putFile(path.join(outputDir, file.name), file.content);
-              extracted++;
-            } catch (e) {
-              console.error('Error extracting ' + file.name);
-            }
-          });
-
-          console.log(pluralize('file', extracted, true) + ' extracted');
+          console.log(pluralize('file', files, true) + ' extracted');
         });
     }
 
     if (input === '-' && !process.stdin.isTTY) {
-      var stdin = process.stdin;
-      var input = [];
+      var stdin = [];
 
-      stdin.on('readable', function () {
+      process.stdin.on('readable', function () {
         var buffer = this.read();
 
         if (buffer) {
-          input.push(buffer);
+          stdin.push(buffer);
         }
       });
 
-      stdin.on('end', function () {
-        input = Buffer.concat(input);
-        output = outputUndefined ? 'stdin' : output;
-        action(input, output);
+      process.stdin.on('end', function () {
+        stdin = Buffer.concat(stdin);
+        action(stdin, output || 'stdin');
       });
     } else {
-      var inputFile = utilities.getFile(input);
-      output = outputUndefined ? inputFile.props.name : output;
-      action(inputFile, output);
+      action(input, output);
     }
   });
 

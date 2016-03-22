@@ -1,4 +1,5 @@
 var fs = require('fs');
+var mock = require('mock-fs');
 
 var chai = require('chai');
 var asPromised = require('chai-as-promised');
@@ -8,20 +9,42 @@ chai.use(asPromised);
 var extract = require('../lib/commands/extract');
 
 describe('Extract', function () {
+  beforeEach(function () {
+    mock({
+      'example.md': fs.readFileSync(__dirname + '/docs/example.md'),
+      'foo': {
+        'bar': 'baz'
+      }
+    });
+  });
+
+  afterEach(mock.restore);
+
   it('works with valid basic example', function () {
-    var input = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
-    return extract(input)
+    return extract('example.md', './')
       .then(function (res) {
-        res.length.should.equal(2);
-        res[0].should.have.property('name');
-        res[0].name.should.equal('hello-world.js');
-        res[1].should.have.property('name');
-        res[1].name.should.equal('hello-world.txt');
+        res.should.equal(2);
+        fs.statSync('./hello-world.js');
+        fs.statSync('./hello-world.txt');
+      });
+  });
+
+  it('works with implicit output directory', function () {
+    return extract('example.md')
+      .then(function (res) {
+        res.should.equal(2);
       });
   });
 
   it('works with a Buffer as input', function () {
-    var input = fs.readFileSync(__dirname + '/docs/example.md');
-    return extract(input);
+    return extract(fs.readFileSync('example.md'), 'stdin');
+  });
+
+  it('works with a Buffer as input without a named output', function () {
+    return extract(fs.readFileSync('example.md'));
+  });
+
+  it('fails with directory', function () {
+    return extract('foo').should.eventually.be.rejected;
   });
 });
