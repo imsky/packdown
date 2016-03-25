@@ -21,7 +21,8 @@
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
     "format": "jsfmt --write -v lib",
     "lint": "eslint lib/*.js lib/commands/*.js bin/*.js",
-    "quality": "npm run format && npm run lint && npm run test",
+    "depcheck": "depcheck | grep -v 'No depcheck issue' && exit 1",
+    "quality": "npm run format && npm run lint && npm run depcheck && npm run test",
     "banner": "node tools/banner",
     "prebuild": "node tools/version && npm run nearley",
     "build": "npm run quality && npm run browserify",
@@ -53,12 +54,15 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
     "codecov": "^1.0.1",
+    "depcheck": "^0.6.1",
     "diff": "^2.1.1",
     "eslint": "^1.5.0",
     "istanbul": "^0.4.2",
     "jsfmt": "^0.5.0",
     "mocha": "^2.4.5",
     "mock-fs": "^3.8.0",
+    "node-sass": "^3.4.2",
+    "typescript": "^1.8.9",
     "uglify-js": "^2.4.24"
   }
 }
