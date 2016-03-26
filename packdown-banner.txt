@@ -1,7 +1,7 @@
 /*!
 
 Packdown - Markdown-based file container format
-Version 0.6.0
+Version 0.7.0
 (c) 2015-2016 Ivan Malopinsky - http://imsky.co
 
 License: MIT
