@@ -34,6 +34,11 @@ var packdown = require('packdownjs');
 var doc = packdown.read(fs.readFileSync('example.md', 'utf8'));
 ```
 
+## Source
+
+* GitHub: <https://github.com/imsky/packdown>
+* GitLab: <https://gitlab.com/imsky/packdown>
+
 ## License
 
 Packdown is provided under the [MIT License](http://opensource.org/licenses/MIT).
