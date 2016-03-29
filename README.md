@@ -14,7 +14,6 @@ Packdown = Markdown + files.
 Save the following as `example.md`:
 
 <pre>
-&#35; Example
 &#35;&#35; /hello
 &#96;&#96;&#96;
 hello world!

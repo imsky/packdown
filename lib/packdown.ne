@@ -5,20 +5,12 @@
 @{% function IDJOIN (d) { return d[0].join(''); } %}
 
 Document ->
-    DocHeader DocInfo FileList
+    FileList
       {% function (d) {
         return {
-          'name': d[0],
-          'info': d[1],
-          'files': d[2]
+          'files': d[0]
         };
       } %}
-
-DocHeader ->
-    "# " HeadingText "\n" {% function (d) { return d[1]; } %}
-
-DocInfo ->
-    DocSafeBlock {% id %}
 
 FileList ->
     FileBlock:+ {% id %}

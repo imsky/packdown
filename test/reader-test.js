@@ -12,8 +12,6 @@ describe('Reader', function () {
   it('should read a basic document', function () {
     var output = reader(basicDocument);
 
-    output.name.should.equal(basicResult.name);
-    output.info.join('').should.equal(basicResult.info);
     output.files.length.should.equal(1);
   });
 
