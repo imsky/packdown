@@ -3,20 +3,30 @@
 @{% function NULL () { return null; } %}
 @{% function JOIN (d) { return d.join(''); } %}
 @{% function IDJOIN (d) { return d[0].join(''); } %}
+@{% var files = {}; %}
 
 Document ->
-    FileList
+    Content:+ 
       {% function (d) {
         return {
-          'files': d[0]
-        };
+          'files': files,
+          'content': d[0]
+        }
       } %}
 
-FileList ->
-    FileBlock:+ {% id %}
+Content ->
+    FileBlock
+      {% function (d) {
+        var file = d[0];
+        files[file.name] = file;
+        return {
+          'file': file.name
+        };
+      } %}
+    | SafeLine {% id %}
 
 FileBlock ->
-    FileHeader FileInfo CodeBlock NL 
+    FileHeader FileInfo CodeBlock 
       {% function (d) {
         var data = d[2];
         var retval = {
@@ -75,7 +85,7 @@ SafeLine ->
       } %}
 
 PathText ->  
-    [a-z0-9\.\-\/]:+ {% IDJOIN %}
+    [a-zA-Z0-9\.\,\_\-\(\)\/]:+ {% IDJOIN %}
 
 ATXHeader ->
     "#":+
@@ -85,9 +95,6 @@ ATXHeader ->
         return line;
       }
       %}
-
-int ->
-    [0-9]:+ {% IDJOIN %}
 
 # Merge multiple newlines into one
 NL ->
