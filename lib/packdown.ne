@@ -74,26 +74,8 @@ SafeLine ->
         return line;
       } %}
 
-DocSafeBlock ->
-    DocSafeLine:* {% id %}
-
-# lines that are safe in document context
-DocSafeLine ->
-    .:* "\n"
-      {% function (d, l, reject) {
-        var line = d[0].join('');
-        if (line[0] === '#' && line.match(/^#{2,} \//)) return reject;
-        return line;
-      } %}
-
-HeadingText ->
-    [^\n]:+ {% IDJOIN %}
-
 PathText ->  
     [a-z0-9\.\-\/]:+ {% IDJOIN %}
-
-SemVer ->
-    int "." int "." int {% JOIN %}
 
 ATXHeader ->
     "#":+
