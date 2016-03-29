@@ -1,5 +1,3 @@
-# Untitled
-
 ### /hello-world.js
 ```js
     console.log('hello world');

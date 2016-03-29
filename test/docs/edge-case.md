@@ -1,7 +1,3 @@
-# Edge case document
-
-This document ends without a newline, which is required after a code block.
-
 ## /foo
 
 This file is not space encoded.

@@ -42,16 +42,6 @@ describe('Writer', function () {
     }).should.throw();
   });
 
-  it('should fail with a missing document name', function () {
-    (function () {
-      writer({
-        'files': [{
-          'name': 'test'
-        }]
-      });
-    }).should.throw();
-  });
-
   it('should fail with invalid file content');
 
   it('should fail with invalid file encoding');
