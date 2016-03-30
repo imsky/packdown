@@ -12,17 +12,11 @@ describe('Reader', function () {
   it('should read a basic document', function () {
     var output = reader(basicDocument);
 
-    output.files.length.should.equal(1);
+    Object.keys(output.files).length.should.equal(1);
   });
 
   it('should read an edge-case document', function () {
     var output = reader(edgeCaseDocument);
-    output.files.length.should.equal(3);
+    Object.keys(output.files).length.should.equal(3);
   });
-
-  it('should fail with an invalid document', function () {
-    (function () {
-      reader('foobar');
-    }).should.throw(Error);
-  })
 });
