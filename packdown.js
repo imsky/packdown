@@ -1,7 +1,7 @@
 /*!
 
 Packdown - Markdown-based file container format
-Version 0.7.0
+Version 0.8.0
 (c) 2015-2016 Ivan Malopinsky - http://imsky.co
 
 License: MIT
@@ -35,17 +35,14 @@ exports.version = version;
 
 },{"./lib/add":2,"./lib/files-to-doc":4,"./lib/reader":6,"./lib/remove":7,"./lib/version":8,"./lib/writer":9}],2:[function(require,module,exports){
 module.exports = function (document, file) {
-  var oldFile = null;
+  var oldFile = document.files[file.name] ? document.files[file.name] : null;
 
-  document.files.forEach(function (_file, index) {
-    if (_file.name === file.name) {
-      oldFile = _file;
-      document.files[index] = file;
-    }
-  });
+  document.files[file.name] = file;
 
   if (!oldFile) {
-    document.files.push(file);
+    document.content.push({
+      'file': file.name
+    });
   }
 
   return oldFile;
@@ -60,9 +57,7 @@ var normalizePath = require('normalize-path');
 @param files An array of file objects with at least a path and a content property
 */
 module.exports = function (root, files) {
-  var document = {
-    'name': 'Untitled'
-  };
+  var document = {};
 
   var basePath = normalizePath(root);
 
@@ -107,7 +102,10 @@ module.exports = function (root, files) {
       'tag': tag,
       'content': content
     };
-  });
+  }).reduce(function (files, file) {
+    files[file.name] = file;
+    return files;
+  }, {});
 
   return document;
 };
@@ -118,12 +116,6 @@ module.exports = function (root, files) {
   function id (x) {
     return x[0];
   }
-  function NULL () {
-    return null;
-  }
-  function JOIN (d) {
-    return d.join('');
-  }
   function IDJOIN (d) {
     return d[0].join('');
   }
@@ -131,48 +123,41 @@ module.exports = function (root, files) {
     ParserRules: [
       {
         "name": "Document",
-        "symbols": ["DocHeader", "DocInfo", "FileList"],
+        "symbols": ["Document$ebnf$1"],
         "postprocess": function (d) {
+          var content = d[0];
+          var files = {};
+
+          content = content.map(function (chunk) {
+            if (typeof chunk === 'string') {
+              return chunk;
+            } else if (chunk.name && chunk.content) {
+              files[chunk.name] = chunk;
+              return {
+                'file': chunk.name
+              };
+            }
+          });
+
           return {
-            'name': d[0],
-            'info': d[1],
-            'files': d[2]
+            'files': files,
+            'content': content
           };
         }
       },
       {
-        "name": "DocHeader$string$1",
-        "symbols": [{
-          "literal": "#"
-        }, {
-          "literal": " "
-        }],
-        "postprocess": function joiner (d) {
-          return d.join('');
-        }
-      },
-      {
-        "name": "DocHeader",
-        "symbols": ["DocHeader$string$1", "HeadingText", {
-          "literal": "\n"
-        }],
-        "postprocess": function (d) {
-          return d[1];
-        }
-      },
-      {
-        "name": "DocInfo",
-        "symbols": ["DocSafeBlock"],
+        "name": "Content",
+        "symbols": ["FileBlock"],
         "postprocess": id
       },
       {
-        "name": "FileList",
-        "symbols": ["FileList$ebnf$1"],
+        "name": "Content",
+        "symbols": ["SafeLine"],
         "postprocess": id
       },
       {
         "name": "FileBlock",
-        "symbols": ["FileHeader", "FileInfo", "CodeBlock", "NL"],
+        "symbols": ["FileHeader", "FileInfo", "CodeBlock"],
         "postprocess": function (d) {
           var data = d[2];
           var retval = {
@@ -288,45 +273,16 @@ module.exports = function (root, files) {
           if (line.indexOf('```') === 0) {
             return reject;
           }
-          return line;
-        }
-      },
-      {
-        "name": "DocSafeBlock",
-        "symbols": ["DocSafeBlock$ebnf$1"],
-        "postprocess": id
-      },
-      {
-        "name": "DocSafeLine",
-        "symbols": ["DocSafeLine$ebnf$1", {
-          "literal": "\n"
-        }],
-        "postprocess": function (d, l, reject) {
-          var line = d[0].join('');
-          if (line[0] === '#' && line.match(/^#{2,} \//)) {
+          if (/^\#{1,6} \//.test(line)) {
             return reject;
           }
           return line;
         }
       },
       {
-        "name": "HeadingText",
-        "symbols": ["HeadingText$ebnf$1"],
-        "postprocess": IDJOIN
-      },
-      {
         "name": "PathText",
         "symbols": ["PathText$ebnf$1"],
         "postprocess": IDJOIN
-      },
-      {
-        "name": "SemVer",
-        "symbols": ["int", {
-          "literal": "."
-        }, "int", {
-          "literal": "."
-        }, "int"],
-        "postprocess": JOIN
       },
       {
         "name": "ATXHeader",
@@ -340,11 +296,6 @@ module.exports = function (root, files) {
         }
       },
       {
-        "name": "int",
-        "symbols": ["int$ebnf$1"],
-        "postprocess": IDJOIN
-      },
-      {
         "name": "NL",
         "symbols": ["NL$ebnf$1"],
         "postprocess": function () {
@@ -353,21 +304,19 @@ module.exports = function (root, files) {
       },
       {
         "name": "_",
-        "symbols": [],
-        "postprocess": NULL
+        "symbols": []
       },
       {
         "name": "_",
-        "symbols": [/[\s]/, "_"],
-        "postprocess": NULL
+        "symbols": [/[\s]/, "_"]
       },
       {
-        "name": "FileList$ebnf$1",
-        "symbols": ["FileBlock"]
+        "name": "Document$ebnf$1",
+        "symbols": ["Content"]
       },
       {
-        "name": "FileList$ebnf$1",
-        "symbols": ["FileBlock", "FileList$ebnf$1"],
+        "name": "Document$ebnf$1",
+        "symbols": ["Content", "Document$ebnf$1"],
         "postprocess": function arrconcat (d) {
           return [d[0]].concat(d[1]);
         }
@@ -418,45 +367,12 @@ module.exports = function (root, files) {
         }
       },
       {
-        "name": "DocSafeBlock$ebnf$1",
-        "symbols": []
-      },
-      {
-        "name": "DocSafeBlock$ebnf$1",
-        "symbols": ["DocSafeLine", "DocSafeBlock$ebnf$1"],
-        "postprocess": function arrconcat (d) {
-          return [d[0]].concat(d[1]);
-        }
-      },
-      {
-        "name": "DocSafeLine$ebnf$1",
-        "symbols": []
-      },
-      {
-        "name": "DocSafeLine$ebnf$1",
-        "symbols": [/./, "DocSafeLine$ebnf$1"],
-        "postprocess": function arrconcat (d) {
-          return [d[0]].concat(d[1]);
-        }
-      },
-      {
-        "name": "HeadingText$ebnf$1",
-        "symbols": [/[^\n]/]
-      },
-      {
-        "name": "HeadingText$ebnf$1",
-        "symbols": [/[^\n]/, "HeadingText$ebnf$1"],
-        "postprocess": function arrconcat (d) {
-          return [d[0]].concat(d[1]);
-        }
+        "name": "PathText$ebnf$1",
+        "symbols": [/[a-zA-Z0-9\.\,\_\-\(\)\/]/]
       },
       {
         "name": "PathText$ebnf$1",
-        "symbols": [/[a-z0-9\.\-\/]/]
-      },
-      {
-        "name": "PathText$ebnf$1",
-        "symbols": [/[a-z0-9\.\-\/]/, "PathText$ebnf$1"],
+        "symbols": [/[a-zA-Z0-9\.\,\_\-\(\)\/]/, "PathText$ebnf$1"],
         "postprocess": function arrconcat (d) {
           return [d[0]].concat(d[1]);
         }
@@ -472,17 +388,6 @@ module.exports = function (root, files) {
         "symbols": [{
           "literal": "#"
         }, "ATXHeader$ebnf$1"],
-        "postprocess": function arrconcat (d) {
-          return [d[0]].concat(d[1]);
-        }
-      },
-      {
-        "name": "int$ebnf$1",
-        "symbols": [/[0-9]/]
-      },
-      {
-        "name": "int$ebnf$1",
-        "symbols": [/[0-9]/, "int$ebnf$1"],
         "postprocess": function arrconcat (d) {
           return [d[0]].concat(d[1]);
         }
@@ -530,15 +435,12 @@ module.exports = function (input, options) {
     input += '\n';
   }
 
-  try {
-    parser.feed(input);
-  } catch ( e ) {
-    throw Error('Failed to parse document');
-  }
+  parser.feed(input);
 
   var document = parser.results[0];
 
-  document.files.forEach(function (file) {
+  Object.keys(document.files).forEach(function (fileName) {
+    var file = document.files[fileName];
     var spaceEncoding = false;
     var spaceEncodedLines = 0;
     var lastLineSpaceEncoded = false;
@@ -584,17 +486,16 @@ module.exports = function (input, options) {
 };
 },{"./constants":3,"./grammar":5,"nearley":10}],7:[function(require,module,exports){
 module.exports = function (document, path) {
-  var oldFile = null;
-
-  document.files.forEach(function (file, index) {
-    if (file.name === path) {
-      oldFile = file;
-      document.files[index] = null;
-    }
-  });
+  var oldFile = document.files[path] ? document.files[path] : null;
 
   if (oldFile) {
-    document.files = document.files.filter(Boolean);
+    delete document.files[path];
+
+    if (Array.isArray(document.content)) {
+      document.content = document.content.filter(function (chunk) {
+        return typeof chunk === 'string' || chunk.file !== path;
+      });
+    }
   }
 
   return oldFile;
@@ -610,27 +511,6 @@ module.exports = {
 var version = require('./version');
 
 var FOUR_SPACES = require('./constants').FOUR_SPACES;
-
-function DocHeader (document) {
-  var ret = [];
-
-  var name = document.name;
-  var info = document.info || '';
-
-  if (!name) {
-    throw Error('Document name is missing');
-  }
-
-  var DocHeader = '# ' + name;
-
-  ret.push(DocHeader);
-
-  if (info) {
-    ret.push(info);
-  }
-
-  return ret.join('\n');
-}
 
 function FileBlock (file) {
   var ret = [];
@@ -678,26 +558,36 @@ function FileBlock (file) {
 
   ret.push(CodeBlockStart, encodedContent, '```');
 
-  return ret.join('\n');
+  return ret.join('\n') + '\n';
 }
 
 module.exports = function (document) {
-  if (!Array.isArray(document.files)) {
-    throw Error('File list is not an array');
+  var content = document.content;
+  var files = document.files;
+
+  if (!content && !files) {
+    throw Error('Document is missing content and files');
   }
 
-  if (!document.files.length) {
-    throw Error('File list is empty');
+  if (!content && files && Object(files) === files && Object.keys(files).length) {
+    content = Object.keys(files).map(function (file) {
+      return {
+        'file': file
+      };
+    });
   }
 
-  var FileList = document.files.map(FileBlock);
+  if (!Array.isArray(content)) {
+    throw Error('Invalid content provided');
+  }
 
-  var Document = [
-    DocHeader(document),
-    FileList.join('\n\n')
-  ];
-
-  return Document.join('\n\n') + '\n';
+  return content.map(function (line) {
+    if (line.file) {
+      return FileBlock(files[line.file]);
+    } else {
+      return line;
+    }
+  }).join('\n');
 };
 
 },{"./constants":3,"./version":8}],10:[function(require,module,exports){
@@ -983,6 +873,6 @@ module.exports = function normalizePath(str, stripTrailing) {
 };
 
 },{}],12:[function(require,module,exports){
-module.exports={"package":"0.7.0","format":1}
+module.exports={"package":"0.8.0","format":1}
 },{}]},{},[1])(1)
 });
