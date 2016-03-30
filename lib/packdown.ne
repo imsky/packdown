@@ -3,26 +3,32 @@
 @{% function NULL () { return null; } %}
 @{% function JOIN (d) { return d.join(''); } %}
 @{% function IDJOIN (d) { return d[0].join(''); } %}
-@{% var files = {}; %}
 
 Document ->
     Content:+ 
       {% function (d) {
+        var content = d[0];
+        var files = {};
+
+        content = content.map(function (chunk) {
+          if (typeof chunk === 'string') {
+            return chunk;
+          } else if (chunk.name && chunk.content) {
+            files[chunk.name] = chunk;
+            return {
+              'file': chunk.name
+            };
+          }
+        });
+
         return {
           'files': files,
-          'content': d[0]
-        }
+          'content': content
+        };
       } %}
 
 Content ->
-    FileBlock
-      {% function (d) {
-        var file = d[0];
-        files[file.name] = file;
-        return {
-          'file': file.name
-        };
-      } %}
+    FileBlock {% id %}
     | SafeLine {% id %}
 
 FileBlock ->
@@ -81,6 +87,7 @@ SafeLine ->
       {% function (d, l, reject) {
         var line = d[0].join('');
         if (line.indexOf('```') === 0) return reject;
+        if (/^\#+ \//.test(line)) return reject;
         return line;
       } %}
 
