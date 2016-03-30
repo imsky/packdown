@@ -1,22 +1,36 @@
 # Packdown Grammar - written in nearley syntax
 
-@{% function NULL () { return null; } %}
-@{% function JOIN (d) { return d.join(''); } %}
 @{% function IDJOIN (d) { return d[0].join(''); } %}
 
 Document ->
-    FileList
+    Content:+ 
       {% function (d) {
+        var content = d[0];
+        var files = {};
+
+        content = content.map(function (chunk) {
+          if (typeof chunk === 'string') {
+            return chunk;
+          } else if (chunk.name && chunk.content) {
+            files[chunk.name] = chunk;
+            return {
+              'file': chunk.name
+            };
+          }
+        });
+
         return {
-          'files': d[0]
+          'files': files,
+          'content': content
         };
       } %}
 
-FileList ->
-    FileBlock:+ {% id %}
+Content ->
+    FileBlock {% id %}
+    | SafeLine {% id %}
 
 FileBlock ->
-    FileHeader FileInfo CodeBlock NL 
+    FileHeader FileInfo CodeBlock 
       {% function (d) {
         var data = d[2];
         var retval = {
@@ -71,29 +85,12 @@ SafeLine ->
       {% function (d, l, reject) {
         var line = d[0].join('');
         if (line.indexOf('```') === 0) return reject;
+        if (/^\#{1,6} \//.test(line)) return reject;
         return line;
       } %}
-
-DocSafeBlock ->
-    DocSafeLine:* {% id %}
-
-# lines that are safe in document context
-DocSafeLine ->
-    .:* "\n"
-      {% function (d, l, reject) {
-        var line = d[0].join('');
-        if (line[0] === '#' && line.match(/^#{2,} \//)) return reject;
-        return line;
-      } %}
-
-HeadingText ->
-    [^\n]:+ {% IDJOIN %}
 
 PathText ->  
-    [a-z0-9\.\-\/]:+ {% IDJOIN %}
-
-SemVer ->
-    int "." int "." int {% JOIN %}
+    [a-zA-Z0-9\.\,\_\-\(\)\/]:+ {% IDJOIN %}
 
 ATXHeader ->
     "#":+
@@ -104,14 +101,11 @@ ATXHeader ->
       }
       %}
 
-int ->
-    [0-9]:+ {% IDJOIN %}
-
 # Merge multiple newlines into one
 NL ->
     "\n":*
       {% function () { return "\n";} %}
 
 _ ->
-    null   {% NULL %}
-    | [\s] _  {% NULL %}
+    null
+    | [\s] _

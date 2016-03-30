@@ -25,15 +25,15 @@ describe('Add function', function () {
 
     packdownDoc = reader(basicDocument);
 
-    packdownDoc.files.length.should.equal(1);
+    Object.keys(packdownDoc.files).length.should.equal(1);
 
     addFunction(packdownDoc, exampleFile);
 
-    packdownDoc.files.length.should.equal(2);
+    Object.keys(packdownDoc.files).length.should.equal(2);
   });
 
   it('replaces a file correctly', function () {
-    packdownDoc.files.length.should.equal(2);
+    Object.keys(packdownDoc.files).length.should.equal(2);
 
     var result = addFunction(packdownDoc, exampleFile);
 
@@ -45,10 +45,10 @@ describe('Add command', function () {
   var addPromise;
   var addResult;
 
-  var document = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
-  var file = fs.readFileSync(__dirname + '/files/example/hello-world.txt', 'utf8');
-
   beforeEach(function () {
+    var document = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
+    var file = fs.readFileSync(__dirname + '/files/example/hello-world.txt', 'utf8');
+
     mock({
       'new-file.xyz': file,
       'hello-world.txt': file,
@@ -75,7 +75,7 @@ describe('Add command', function () {
 
   it('outputs a valid document', function () {
     var doc = reader(addResult);
-    doc.files.length.should.equal(2);
-    doc.files[1].name.should.equal('hello-world.txt');
+    Object.keys(doc.files).length.should.equal(2);
+    doc.files.should.have.property('hello-world.txt');
   });
 });
