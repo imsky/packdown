@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/imsky/packdown.git"
   },
-  "_bin": {
+  "bin": {
     "packdown": "./bin/packdown.js"
   },
   "scripts": {
