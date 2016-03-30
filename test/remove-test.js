@@ -19,11 +19,11 @@ describe('Remove function', function () {
 
     packdownDoc = reader(basicDocument);
 
-    packdownDoc.files.length.should.equal(2);
+    Object.keys(packdownDoc.files).length.should.equal(2);
 
     removeFunction(packdownDoc, 'hello-world.js');
 
-    packdownDoc.files.length.should.equal(1);
+    Object.keys(packdownDoc.files).length.should.equal(1);
   });
 
   it('does not remove a file that does not exist', function () {
