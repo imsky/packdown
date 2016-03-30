@@ -16,7 +16,6 @@ describe('Remove function', function () {
 
   it('removes a file correctly', function () {
     var basicDocument = fs.readFileSync(__dirname + '/docs/example.md');
-
     packdownDoc = reader(basicDocument);
 
     Object.keys(packdownDoc.files).length.should.equal(2);
@@ -29,6 +28,14 @@ describe('Remove function', function () {
   it('does not remove a file that does not exist', function () {
     removeFunction(packdownDoc, 'hello-world.js');
   });
+
+  it('removes a file from a document without content', function () {
+    var contentlessDoc = {'files': {'test': true}};
+
+    removeFunction(contentlessDoc, 'test');
+
+    Object.keys(contentlessDoc.files).length.should.equal(0);
+  })
 });
 
 describe('Remove command', function () {

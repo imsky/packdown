@@ -1,7 +1,5 @@
 # Packdown Grammar - written in nearley syntax
 
-@{% function NULL () { return null; } %}
-@{% function JOIN (d) { return d.join(''); } %}
 @{% function IDJOIN (d) { return d[0].join(''); } %}
 
 Document ->
@@ -87,7 +85,7 @@ SafeLine ->
       {% function (d, l, reject) {
         var line = d[0].join('');
         if (line.indexOf('```') === 0) return reject;
-        if (/^\#+ \//.test(line)) return reject;
+        if (/^\#{1,6} \//.test(line)) return reject;
         return line;
       } %}
 
@@ -109,5 +107,5 @@ NL ->
       {% function () { return "\n";} %}
 
 _ ->
-    null   {% NULL %}
-    | [\s] _  {% NULL %}
+    null
+    | [\s] _
