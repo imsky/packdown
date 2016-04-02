@@ -14,7 +14,7 @@
     "packdown": "./bin/packdown.js"
   },
   "scripts": {
-    "test": "istanbul cover _mocha -- --bail './test/**/*-test.js'",
+    "test": "istanbul cover -x vendor/*.js _mocha -- --bail './test/**/*-test.js'",
     "codecov": "codecov",
     "nearley": "nearleyc lib/packdown.ne -o lib/grammar.js",
     "browserify": "browserify -s Packdown index.js -o packdown.js",
