@@ -1,6 +1,6 @@
 ### /hello-world
-simple file
+basic file
 ```
-    foo
+    {{foo}}
     bar
 ```

@@ -2,8 +2,8 @@
   "files": [
     {
       "name": "hello-world",
-      "info": "simple file",
-      "content": "foo\nbar"
+      "info": "basic file",
+      "content": "{{foo}}\nbar"
     }
   ]
 }
