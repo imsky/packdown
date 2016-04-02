@@ -11,6 +11,7 @@ var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
 var add = require('../lib/commands/add');
 var remove = require('../lib/commands/remove');
+var template = require('../lib/commands/template');
 
 program.version(packdown.version.packageVersion);
 
@@ -28,7 +29,7 @@ program
 
 program
   .command('extract <input> [output]')
-  .description('extract <input> Packdown doc into [output] directory')
+  .description('extract <input> file into [output] directory')
   .action(function (input, output) {
     function action (_input, _output) {
       extract(_input, _output)
@@ -55,6 +56,16 @@ program
     } else {
       action(input, output);
     }
+  });
+
+program
+  .command('template <input> <variables> [output]')
+  .description('extract <input> file templated with <variables> file to [output] directory')
+  .action(function (input, variables, output) {
+    template(input, variables, output)
+      .then(function(files) {
+        console.log(pluralize('file', files, true) + ' extracted');
+      });
   });
 
 program
