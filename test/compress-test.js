@@ -7,9 +7,9 @@ chai.should();
 chai.use(asPromised);
 
 var compress = require('../lib/commands/compress');
+var fixtures = require('./fixtures');
 
-//todo: factor these out into common file
-var exampleDoc = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
+var exampleDoc = fixtures.documents.example;
 var exampleFiles = {
   'files': {
     'hello-world.js': fs.readFileSync(__dirname + '/files/example/hello-world.js', 'utf8'),

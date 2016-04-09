@@ -9,13 +9,14 @@ chai.use(asPromised);
 var addFunction = require('../lib/add')
 var addCommand = require('../lib/commands/add');
 var reader = require('../lib/reader');
+var fixtures = require('./fixtures');
 
 describe('Add function', function () {
   var packdownDoc;
   var exampleFile;
 
   it('adds a file correctly', function () {
-    var basicDocument = fs.readFileSync(__dirname + '/docs/basic.md');
+    var basicDocument = fixtures.documents.basic;
     var file = fs.readFileSync(__dirname + '/files/example/hello-world.txt', 'utf8');
 
     exampleFile = {
@@ -46,7 +47,7 @@ describe('Add command', function () {
   var addResult;
 
   beforeEach(function () {
-    var document = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
+    var document = fixtures.documents.example;
     var file = fs.readFileSync(__dirname + '/files/example/hello-world.txt', 'utf8');
 
     mock({

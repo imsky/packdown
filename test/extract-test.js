@@ -7,11 +7,12 @@ chai.should();
 chai.use(asPromised);
 
 var extract = require('../lib/commands/extract');
+var fixtures = require('./fixtures');
 
 describe('Extract', function () {
   beforeEach(function () {
     mock({
-      'example.md': fs.readFileSync(__dirname + '/docs/example.md'),
+      'example.md': fixtures.documents.example,
       'foo': {
         'bar': 'baz'
       }

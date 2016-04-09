@@ -8,7 +8,9 @@ chai.use(asPromised);
 
 var packdown = require('../index');
 var templateFunction = require('../lib/template');
-var basicDoc = fs.readFileSync(__dirname + '/docs/basic.md', 'utf8');
+var fixtures = require('./fixtures');
+
+var basicDoc = fixtures.documents.basic;
 
 describe('Template function', function () {
   it('works with a basic example', function () {

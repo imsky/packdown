@@ -5,12 +5,13 @@ chai.should();
 
 var writer = require('../lib/writer');
 var basicDocument = require('./docs/basic.json');
+var fixtures = require('./fixtures');
 
 describe('Writer', function () {
   it('should write a basic document', function () {
     var output = writer(basicDocument);
 
-    var expected = fs.readFileSync(__dirname + '/docs/basic.md', 'utf8');
+    var expected = fixtures.documents.basic;
 
     output.should.equal(expected);
   });

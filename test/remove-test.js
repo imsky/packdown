@@ -9,14 +9,14 @@ chai.use(asPromised);
 var removeFunction = require('../lib/remove')
 var removeCommand = require('../lib/commands/remove');
 var reader = require('../lib/reader');
+var fixtures = require('./fixtures');
 
 describe('Remove function', function () {
   var packdownDoc;
   var exampleFile;
 
   it('removes a file correctly', function () {
-    var basicDocument = fs.readFileSync(__dirname + '/docs/example.md');
-    packdownDoc = reader(basicDocument);
+    packdownDoc = reader(fixtures.documents.example);
 
     Object.keys(packdownDoc.files).length.should.equal(2);
 
@@ -42,7 +42,7 @@ describe('Remove command', function () {
   var addPromise;
   var addResult;
 
-  var document = fs.readFileSync(__dirname + '/docs/example.md', 'utf8');
+  var document = fixtures.documents.example;
 
   beforeEach(function () {
     mock({
