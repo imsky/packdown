@@ -1,4 +1,5 @@
 # Packdown Grammar - written in nearley syntax
+# Thanks to Hardmath123 <https://github.com/Hardmath123> for help
 
 @{% function IDJOIN (d) { return d[0].join(''); } %}
 

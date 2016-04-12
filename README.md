@@ -20,6 +20,4 @@ Packdown is provided under the [MIT License](http://opensource.org/licenses/MIT)
 
 ## Credits
 
-Thanks to [@hardmath123](https://github.com/Hardmath123) for help with the parser grammar.
-
 Packdown is a project by [Ivan Malopinsky](http://imsky.co).
