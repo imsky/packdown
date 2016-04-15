@@ -22,7 +22,7 @@
     "lint": "eslint lib/*.js lib/commands/*.js bin/*.js",
     "quality": "npm run format && npm run lint && npm run test",
     "banner": "node tools/banner",
-    "docs": "jsdoc -r -d docs lib/",
+    "docs": "jsdoc2md --property-list-format table 'lib/**/*.js' > api.md",
     "prebuild": "node tools/version",
     "build": "npm run quality && npm run browserify",
     "postbuild": "npm run uglify && npm run banner"
@@ -53,6 +53,7 @@
     "eslint": "^1.10.3",
     "istanbul": "^0.4.2",
     "jsdoc": "^3.4.0",
+    "jsdoc-to-markdown": "^1.3.3",
     "jsfmt": "^0.5.3",
     "mocha": "^2.4.5",
     "mock-fs": "^3.8.0",
