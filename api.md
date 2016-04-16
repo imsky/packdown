@@ -4,19 +4,19 @@
 <dt><a href="#addFunction">addFunction(document, file)</a> ⇒</dt>
 <dd><p>Add a file object to a document object</p>
 </dd>
-<dt><a href="#exports">exports(file, document)</a> ⇒</dt>
-<dd><p>Description</p>
+<dt><a href="#AddCommand">AddCommand(file, document)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Adds a file to a Packdown document</p>
 </dd>
-<dt><a href="#exports">exports(input, output)</a> ⇒</dt>
-<dd><p>Description</p>
+<dt><a href="#CompressCommand">CompressCommand(input, output)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Compresses a directory to a Packdown file</p>
 </dd>
-<dt><a href="#extractCommand">extractCommand(input, output)</a> ⇒ <code>Promise</code></dt>
-<dd><p>Extract a Packdown document</p>
+<dt><a href="#ExtractCommand">ExtractCommand(input, output)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Extract a Packdown document to directory</p>
 </dd>
-<dt><a href="#removeCommand">removeCommand(file, document)</a> ⇒ <code>Promise</code></dt>
+<dt><a href="#RemoveCommand">RemoveCommand(file, document)</a> ⇒ <code>Promise</code></dt>
 <dd><p>Removes a file from a Packdown document</p>
 </dd>
-<dt><a href="#templateCommand">templateCommand(input, variables, output)</a> ⇒ <code>Promise</code></dt>
+<dt><a href="#TemplateCommand">TemplateCommand(input, variables, output)</a> ⇒ <code>Promise</code></dt>
 <dd><p>Extract a Packdown document as templated files</p>
 </dd>
 <dt><a href="#filesToDoc">filesToDoc(root, files)</a> ⇒</dt>
@@ -75,59 +75,57 @@ Add a file object to a document object
 | document | <code>Object</code> | 
 | file | <code>Object</code> | 
 
-<a name="exports"></a>
+<a name="AddCommand"></a>
 
-## exports(file, document) ⇒
-Description
-
-**Kind**: global function  
-**Returns**: CallExpression  
-
-| Param |
-| --- |
-| file | 
-| document | 
-
-<a name="exports"></a>
-
-## exports(input, output) ⇒
-Description
-
-**Kind**: global function  
-**Returns**: CallExpression  
-
-| Param |
-| --- |
-| input | 
-| output | 
-
-<a name="extractCommand"></a>
-
-## extractCommand(input, output) ⇒ <code>Promise</code>
-Extract a Packdown document
+## AddCommand(file, document) ⇒ <code>Promise</code>
+Adds a file to a Packdown document
 
 **Kind**: global function  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| input | <code>String</code> | Path to input file |
+| file | <code>String</code> | Input file path |
+| document | <code>String</code> | Packdown document path |
+
+<a name="CompressCommand"></a>
+
+## CompressCommand(input, output) ⇒ <code>Promise</code>
+Compresses a directory to a Packdown file
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>String</code> | Input directory |
+| output |  | Output Packdown file |
+
+<a name="ExtractCommand"></a>
+
+## ExtractCommand(input, output) ⇒ <code>Promise</code>
+Extract a Packdown document to directory
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>Object</code> | Input file (String or Buffer) |
 | output | <code>String</code> | Output path |
 
-<a name="removeCommand"></a>
+<a name="RemoveCommand"></a>
 
-## removeCommand(file, document) ⇒ <code>Promise</code>
+## RemoveCommand(file, document) ⇒ <code>Promise</code>
 Removes a file from a Packdown document
 
 **Kind**: global function  
 
-| Param |
-| --- |
-| file | 
-| document | 
+| Param | Type | Description |
+| --- | --- | --- |
+| file | <code>String</code> | Path to remove |
+| document | <code>String</code> | Path to Packdown document |
 
-<a name="templateCommand"></a>
+<a name="TemplateCommand"></a>
 
-## templateCommand(input, variables, output) ⇒ <code>Promise</code>
+## TemplateCommand(input, variables, output) ⇒ <code>Promise</code>
 Extract a Packdown document as templated files
 
 **Kind**: global function  
