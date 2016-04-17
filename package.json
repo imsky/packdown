@@ -22,10 +22,10 @@
     "lint": "eslint lib/*.js lib/commands/*.js bin/*.js",
     "quality": "npm run format && npm run lint && npm run test",
     "banner": "node tools/banner",
-    "docs": "jsdoc2md --property-list-format table 'lib/**/*.js' > api.md",
+    "docs": "jsdoc2md --property-list-format table 'index.js' > API.md",
     "prebuild": "node tools/version",
     "build": "npm run quality && npm run browserify",
-    "postbuild": "npm run uglify && npm run banner"
+    "postbuild": "npm run uglify && npm run banner && npm run docs"
   },
   "keywords": [
     "markdown",

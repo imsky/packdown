@@ -10,12 +10,171 @@ Issues:  https://github.com/imsky/packdown/issues
 */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Packdown = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var write = require('./lib/writer');
-var read = require('./lib/reader');
-var filesToDoc = require('./lib/files-to-doc');
+var version = require('./packdown-version');
+
+var parser = require('./lib/parser');
 
 var templayed = require('./vendor/templayed');
-var version = require('./packdown-version');
+var normalizePath = require('./vendor/normalize-path');
+
+var FOUR_SPACES = '    ';
+
+/**
+ * @param {String} line
+ * @return Boolean
+ */
+function isSpaceEncoded (line) {
+  return line.slice(0, 4) === FOUR_SPACES;
+}
+
+/**
+ * Read text as a Packdown document
+ * @param {String} input
+ * @param {Object} options - {disableSpaceEncoding}
+ * @return Document object
+ */
+exports.read = function PackdownReader (input, options) {
+  options = options || {};
+
+  if (input.slice(-1) !== '\n') {
+    input += '\n';
+  }
+
+  var document = parser(input);
+
+  Object.keys(document.files).forEach(function (fileName) {
+    var file = document.files[fileName];
+    var spaceEncoding = false;
+    var spaceEncodedLines = 0;
+    var lastLineSpaceEncoded = false;
+
+    if (options.disableSpaceEncoding) {
+      return document;
+    }
+
+    if (file.content.length > 1) {
+      // if two consecutive lines (ignoring empty lines) are space encoded, then the file is treated as space encoded
+      for (var i = 0; i < file.content.length; i++) {
+        if (!file.content[i].length) {
+          continue;
+        }
+
+        lastLineSpaceEncoded = isSpaceEncoded(file.content[i]);
+
+        if (lastLineSpaceEncoded) {
+          spaceEncodedLines++;
+          if (spaceEncodedLines > 1) {
+            spaceEncoding = true;
+            break;
+          }
+        } else {
+          if (i === 0 || lastLineSpaceEncoded) {
+            spaceEncoding = false;
+            break;
+          }
+        }
+      }
+    } else if (file.content.length === 1 && isSpaceEncoded(file.content[0])) {
+      spaceEncoding = true;
+    }
+
+    if (spaceEncoding) {
+      file.content = file.content.map(function (line) {
+        return line.replace(/^ {4}/, '');
+      });
+    }
+  });
+
+  return document;
+};
+
+/**
+ * Generate a Packdown file text block given a Packdown file object
+ * @param {File} file
+ * @return String
+ */
+function FileBlock (file) {
+  var ret = [];
+
+  var name = file.name;
+  var info = file.info || '';
+  var tag = file.tag || '';
+  var content = file.content || '';
+  var encoding = file.encoding || 'space';
+
+  if (!name) {
+    throw Error('File name is missing');
+  }
+
+  if (name.match(/\s/)) {
+    throw Error('File name contains spaces');
+  }
+
+  var FileHeader = '### /' + name;
+
+  ret.push(FileHeader);
+
+  if (info) {
+    ret.push(info);
+  }
+
+  var CodeBlockStart = '```' + tag;
+
+  var encodedContent = content;
+
+  if (typeof encodedContent === 'string') {
+    encodedContent = content.split('\n');
+  } else if (!Array.isArray(encodedContent)) {
+    throw Error('File content is neither an array nor a string');
+  }
+
+  switch (encoding) {
+    case 'space':
+      encodedContent = encodedContent.map(function (line) {
+        return FOUR_SPACES + line;
+      })
+        .join('\n');
+      break;
+  }
+
+  ret.push(CodeBlockStart, encodedContent, '```');
+
+  return ret.join('\n') + '\n';
+}
+
+/**
+ * Writes a Packdown document from a document object
+ * @param {Object} document object
+ * @return String
+ */
+exports.write = function Writer (document) {
+  var content = document.content;
+  var files = document.files;
+
+  if (!content && !files) {
+    throw Error('Document is missing content and files');
+  }
+
+  if ((!content || !content.length) && files && Object(files) === files && Object.keys(files).length) {
+    content = Object.keys(files).map(function (file) {
+      return {
+        'file': file
+      };
+    });
+  }
+
+  if (!Array.isArray(content)) {
+    throw Error('Invalid content provided');
+  }
+
+  return content.map(function (line) {
+    if (line.file) {
+      return FileBlock(files[line.file]);
+    } else {
+      return line;
+    }
+  }).join('\n');
+};
 
 /**
  * Add a file object to a document object
@@ -59,41 +218,13 @@ exports.remove = function (document, path) {
   return oldFile;
 };
 
-exports.write = write;
-
-exports.read = read;
-
-exports.filesToDoc = filesToDoc;
-
-/**
- * Render a Mustache template
- * @method exports
- * @param {String} template - The template to render
- * @param {Object} variables - The values used within template
- * @return String
- */
-exports.template = function (template, variables) {
-  return templayed(template)(variables);
-};
-
-exports.version = {
-  'package': version.package,
-  'format': version.format
-};
-
-},{"./lib/files-to-doc":3,"./lib/reader":5,"./lib/writer":6,"./packdown-version":8,"./vendor/templayed":9}],2:[function(require,module,exports){
-exports.FOUR_SPACES = '    ';
-},{}],3:[function(require,module,exports){
-var normalizePath = require('normalize-path');
-
 /**
  * Convert a set of files to a document
- * @method filesToDoc
  * @param {String} root Root directory
  * @param files An array of file objects with at least a path and a content property
  * @return Document object
  */
-module.exports = function filesToDoc (root, files) {
+exports.filesToDoc = function filesToDoc (root, files) {
   var document = {
     'content': []
   };
@@ -148,18 +279,33 @@ module.exports = function filesToDoc (root, files) {
 
   return document;
 };
-},{"normalize-path":7}],4:[function(require,module,exports){
+
+/**
+ * Render a Mustache template
+ * @param {String} template - The template to render
+ * @param {Object} variables - The values used within template
+ * @return String
+ */
+exports.template = function (template, variables) {
+  return templayed(template)(variables);
+};
+
+exports.version = {
+  'package': version.package,
+  'format': version.format
+};
+
+},{"./lib/parser":2,"./packdown-version":3,"./vendor/normalize-path":4,"./vendor/templayed":5}],2:[function(require,module,exports){
 var rFileHeading = /^\#{1,6} \/([a-z0-9\.\,\_\-\(\)\/]+)$/i;
 var rCodeHeading = /^```([a-z0-9][\-a-z0-9]*)$/i;
 var rCodeEnd = /^```$/;
 
 /**
  * Parse text into Packdown document
- * @method PackdownLineParser
  * @param {String} input
  * @return Document object
  */
-exports.line = function PackdownLineParser (input) {
+module.exports = function PackdownLineParser (input) {
   var document = {
     'files': {},
     'content': []
@@ -227,175 +373,9 @@ exports.line = function PackdownLineParser (input) {
   return document;
 };
 
-},{}],5:[function(require,module,exports){
-var parser = require('./parser').line;
-
-var FOUR_SPACES = require('./constants').FOUR_SPACES;
-
-/**
- * @method isSpaceEncoded
- * @param {String} line
- * @return Boolean
- */
-function isSpaceEncoded (line) {
-  return line.slice(0, 4) === FOUR_SPACES;
-}
-
-/**
- * Read text as a Packdown document
- * @method PackdownReader
- * @param {String} input
- * @param {Object} options - {disableSpaceEncoding}
- * @return Document object
- */
-module.exports = function PackdownReader (input, options) {
-  options = options || {};
-
-  if (input.slice(-1) !== '\n') {
-    input += '\n';
-  }
-
-  var document = parser(input);
-
-  Object.keys(document.files).forEach(function (fileName) {
-    var file = document.files[fileName];
-    var spaceEncoding = false;
-    var spaceEncodedLines = 0;
-    var lastLineSpaceEncoded = false;
-
-    if (options.disableSpaceEncoding) {
-      return document;
-    }
-
-    if (file.content.length > 1) {
-      // if two consecutive lines (ignoring empty lines) are space encoded, then the file is treated as space encoded
-      for (var i = 0; i < file.content.length; i++) {
-        if (!file.content[i].length) {
-          continue;
-        }
-
-        lastLineSpaceEncoded = isSpaceEncoded(file.content[i]);
-
-        if (lastLineSpaceEncoded) {
-          spaceEncodedLines++;
-          if (spaceEncodedLines > 1) {
-            spaceEncoding = true;
-            break;
-          }
-        } else {
-          if (i === 0 || lastLineSpaceEncoded) {
-            spaceEncoding = false;
-            break;
-          }
-        }
-      }
-    } else if (file.content.length === 1 && isSpaceEncoded(file.content[0])) {
-      spaceEncoding = true;
-    }
-
-    if (spaceEncoding) {
-      file.content = file.content.map(function (line) {
-        return line.replace(/^ {4}/, '');
-      });
-    }
-  });
-
-  return document;
-};
-},{"./constants":2,"./parser":4}],6:[function(require,module,exports){
-var FOUR_SPACES = require('./constants').FOUR_SPACES;
-
-/**
- * Generate a Packdown file text block given a Packdown file object
- * @method FileBlock
- * @param {File} file
- * @return String
- */
-function FileBlock (file) {
-  var ret = [];
-
-  var name = file.name;
-  var info = file.info || '';
-  var tag = file.tag || '';
-  var content = file.content || '';
-  var encoding = file.encoding || 'space';
-
-  if (!name) {
-    throw Error('File name is missing');
-  }
-
-  if (name.match(/\s/)) {
-    throw Error('File name contains spaces');
-  }
-
-  var FileHeader = '### /' + name;
-
-  ret.push(FileHeader);
-
-  if (info) {
-    ret.push(info);
-  }
-
-  var CodeBlockStart = '```' + tag;
-
-  var encodedContent = content;
-
-  if (typeof encodedContent === 'string') {
-    encodedContent = content.split('\n');
-  } else if (!Array.isArray(encodedContent)) {
-    throw Error('File content is neither an array nor a string');
-  }
-
-  switch (encoding) {
-    case 'space':
-      encodedContent = encodedContent.map(function (line) {
-        return FOUR_SPACES + line;
-      })
-        .join('\n');
-      break;
-  }
-
-  ret.push(CodeBlockStart, encodedContent, '```');
-
-  return ret.join('\n') + '\n';
-}
-
-/**
- * Writes a Packdown document from a document object
- * @method Writer
- * @param {Object} document object
- * @return String
- */
-module.exports = function Writer (document) {
-  var content = document.content;
-  var files = document.files;
-
-  if (!content && !files) {
-    throw Error('Document is missing content and files');
-  }
-
-  if ((!content || !content.length) && files && Object(files) === files && Object.keys(files).length) {
-    content = Object.keys(files).map(function (file) {
-      return {
-        'file': file
-      };
-    });
-  }
-
-  if (!Array.isArray(content)) {
-    throw Error('Invalid content provided');
-  }
-
-  return content.map(function (line) {
-    if (line.file) {
-      return FileBlock(files[line.file]);
-    } else {
-      return line;
-    }
-  }).join('\n');
-};
-
-},{"./constants":2}],7:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
+module.exports={"package":"0.8.0","format":1}
+},{}],4:[function(require,module,exports){
 /*!
  * normalize-path <https://github.com/jonschlinkert/normalize-path>
  *
@@ -414,9 +394,7 @@ module.exports = function normalizePath(str, stripTrailing) {
   return str;
 };
 
-},{}],8:[function(require,module,exports){
-module.exports={"package":"0.8.0","format":1}
-},{}],9:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 // *
 // * templayed.js (Uncompressed)
 // * The fastest and smallest Mustache compliant Javascript templating library written in 1806 bytes (uncompressed)
