@@ -9,6 +9,22 @@ Packdown stores files inside Markdown documents.
 
 * [npm](https://www.npmjs.com/package/packdownjs): `npm install -g packdownjs`
 
+## Building
+
+Packdown uses npm scripts and [shelljs](https://github.com/shelljs/shelljs) for building.
+
+```
+npm run build
+```
+
+## Testing
+
+Packdown uses [Mocha](https://github.com/mochajs/mocha) and [Istanbul](https://github.com/gotwarlost/istanbul) for testing and coverage.
+
+```
+npm test
+```
+
 ## Source
 
 * GitHub: <https://github.com/imsky/packdown>

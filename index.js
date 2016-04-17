@@ -215,7 +215,7 @@ exports.remove = function (document, path) {
 /**
  * Convert a set of files to a document
  * @param {String} root Root directory
- * @param files An array of file objects with at least a path and a content property
+ * @param {Array} files An array of file objects with at least a path and a content property
  * @return Document object
  */
 exports.filesToDoc = function filesToDoc (root, files) {
