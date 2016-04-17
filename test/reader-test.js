@@ -3,7 +3,7 @@ var fs = require('fs');
 var chai = require('chai');
 chai.should();
 
-var reader = require('../lib/reader');
+var packdown = require('../index');
 var fixtures = require('./fixtures');
 
 var basicDocument = fixtures.documents.basic;
@@ -12,15 +12,15 @@ var edgeCaseDocument = fixtures.documents.edgeCase;
 
 describe('Reader', function () {
   it('should read a basic document', function () {
-    var output = reader(basicDocument);
+    var output = packdown.read(basicDocument);
 
     Object.keys(output.files).length.should.equal(1);
 
-    output = reader(basicDocument, {'disableSpaceEncoding': true});
+    output = packdown.read(basicDocument, {'disableSpaceEncoding': true});
   });
 
   it('should read an edge-case document', function () {
-    var output = reader(edgeCaseDocument);
+    var output = packdown.read(edgeCaseDocument);
     Object.keys(output.files).length.should.equal(3);
   });
 });

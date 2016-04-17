@@ -5,9 +5,7 @@ chai.should();
 
 var parser = require('../lib/parser');
 
-describe('Line parser', function () {
-  var lineParser = parser.line;
-
+describe('Parser parser', function () {
   it('should fail on unfinished file', function () {
     var text = [
       '# /file1',
@@ -15,7 +13,7 @@ describe('Line parser', function () {
     ].join('\n');
 
     (function () {
-      lineParser(text);
+      parser(text);
     }).should.throw();
   });
 
@@ -30,7 +28,7 @@ describe('Line parser', function () {
     ].join('\n');
 
     (function () {
-      lineParser(text);
+      parser(text);
     }).should.throw();
   });
 
@@ -47,7 +45,7 @@ describe('Line parser', function () {
     ].join('\n');
 
     (function () {
-      lineParser(text);
+      parser(text);
     }).should.not.throw();
   });
 
@@ -59,7 +57,7 @@ describe('Line parser', function () {
     ].join('\n');
 
     (function () {
-      lineParser(text);
+      parser(text);
     }).should.throw();
   });
 });

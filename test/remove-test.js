@@ -8,7 +8,6 @@ chai.use(asPromised);
 
 var packdown = require('../index');
 var removeCommand = require('../lib/commands/remove');
-var reader = require('../lib/reader');
 var fixtures = require('./fixtures');
 
 describe('Remove function', function () {
@@ -16,7 +15,7 @@ describe('Remove function', function () {
   var exampleFile;
 
   it('removes a file correctly', function () {
-    packdownDoc = reader(fixtures.documents.example);
+    packdownDoc = packdown.read(fixtures.documents.example);
 
     Object.keys(packdownDoc.files).length.should.equal(2);
 

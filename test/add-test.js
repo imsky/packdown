@@ -8,7 +8,6 @@ chai.use(asPromised);
 
 var packdown = require('../index');
 var addCommand = require('../lib/commands/add');
-var reader = require('../lib/reader');
 var fixtures = require('./fixtures');
 
 describe('Add function', function () {
@@ -24,7 +23,7 @@ describe('Add function', function () {
       'content': file
     };
 
-    packdownDoc = reader(basicDocument);
+    packdownDoc = packdown.read(basicDocument);
 
     Object.keys(packdownDoc.files).length.should.equal(1);
 
@@ -75,7 +74,7 @@ describe('Add command', function () {
   });
 
   it('outputs a valid document', function () {
-    var doc = reader(addResult);
+    var doc = packdown.read(addResult);
     Object.keys(doc.files).length.should.equal(2);
     doc.files.should.have.property('hello-world.txt');
   });
