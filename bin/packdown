@@ -27,6 +27,7 @@ program
       });
   });
 
+//todo: add --vars option
 program
   .command('extract <input> [output]')
   .description('extract <input> file into [output] directory')
@@ -62,6 +63,7 @@ program
     }
   });
 
+//todo: get rid of this as a separate command
 program
   .command('template <input> <variables> [output]')
   .description('extract <input> file templated with <variables> file to [output] directory')

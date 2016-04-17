@@ -293,6 +293,7 @@ exports.filesToDoc = function filesToDoc (root, files) {
       tag = tag.slice(1);
     }
 
+    //todo: dasherize filePath
     return {
       'name': filePath,
       'tag': tag,
