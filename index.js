@@ -1,13 +1,9 @@
-var version = require('./lib/version');
-
 var write = require('./lib/writer');
 var read = require('./lib/reader');
-var template =  require('./lib/template');
 var filesToDoc = require('./lib/files-to-doc');
 
-exports.write = write;
-
-exports.read = read;
+var templayed = require('./vendor/templayed');
+var version = require('./packdown-version');
 
 /**
  * Add a file object to a document object
@@ -51,8 +47,24 @@ exports.remove = function (document, path) {
   return oldFile;
 };
 
+exports.write = write;
+
+exports.read = read;
+
 exports.filesToDoc = filesToDoc;
 
-exports.template = template;
+/**
+ * Render a Mustache template
+ * @method exports
+ * @param {String} template - The template to render
+ * @param {Object} variables - The values used within template
+ * @return String
+ */
+exports.template = function (template, variables) {
+  return templayed(template)(variables);
+};
 
-exports.version = version;
+exports.version = {
+  'package': version.package,
+  'format': version.format
+};
