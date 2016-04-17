@@ -13,6 +13,7 @@
         "no-unreachable": 2,
         "no-empty": 2,
         "no-undef": 2,
-        "semi": [1, "always"]
+        "semi": [1, "always"],
+        "func-names": 2
     }
 }

@@ -5,6 +5,12 @@ var filesToDoc = require('./lib/files-to-doc');
 var templayed = require('./vendor/templayed');
 var version = require('./packdown-version');
 
+exports.read = read;
+
+exports.write = write;
+
+exports.filesToDoc = filesToDoc;
+
 /**
  * Add a file object to a document object
  * @param {Object} document
@@ -47,15 +53,8 @@ exports.remove = function (document, path) {
   return oldFile;
 };
 
-exports.write = write;
-
-exports.read = read;
-
-exports.filesToDoc = filesToDoc;
-
 /**
  * Render a Mustache template
- * @method exports
  * @param {String} template - The template to render
  * @param {Object} variables - The values used within template
  * @return String
