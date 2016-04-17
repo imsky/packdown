@@ -6,7 +6,7 @@ var asPromised = require('chai-as-promised');
 chai.should();
 chai.use(asPromised);
 
-var removeFunction = require('../lib/remove')
+var packdown = require('../index');
 var removeCommand = require('../lib/commands/remove');
 var reader = require('../lib/reader');
 var fixtures = require('./fixtures');
@@ -20,19 +20,19 @@ describe('Remove function', function () {
 
     Object.keys(packdownDoc.files).length.should.equal(2);
 
-    removeFunction(packdownDoc, 'hello-world.js');
+    packdown.remove(packdownDoc, 'hello-world.js');
 
     Object.keys(packdownDoc.files).length.should.equal(1);
   });
 
   it('does not remove a file that does not exist', function () {
-    removeFunction(packdownDoc, 'hello-world.js');
+    packdown.remove(packdownDoc, 'hello-world.js');
   });
 
   it('removes a file from a document without content', function () {
     var contentlessDoc = {'files': {'test': true}};
 
-    removeFunction(contentlessDoc, 'test');
+    packdown.remove(contentlessDoc, 'test');
 
     Object.keys(contentlessDoc.files).length.should.equal(0);
   })

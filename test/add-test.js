@@ -6,7 +6,7 @@ var asPromised = require('chai-as-promised');
 chai.should();
 chai.use(asPromised);
 
-var addFunction = require('../lib/add')
+var packdown = require('../index');
 var addCommand = require('../lib/commands/add');
 var reader = require('../lib/reader');
 var fixtures = require('./fixtures');
@@ -28,7 +28,7 @@ describe('Add function', function () {
 
     Object.keys(packdownDoc.files).length.should.equal(1);
 
-    addFunction(packdownDoc, exampleFile);
+    packdown.add(packdownDoc, exampleFile);
 
     Object.keys(packdownDoc.files).length.should.equal(2);
   });
@@ -36,7 +36,7 @@ describe('Add function', function () {
   it('replaces a file correctly', function () {
     Object.keys(packdownDoc.files).length.should.equal(2);
 
-    var result = addFunction(packdownDoc, exampleFile);
+    var result = packdown.add(packdownDoc, exampleFile);
 
     result.name.should.equal('new-file');
   });
