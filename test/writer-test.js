@@ -23,13 +23,22 @@ describe('Writer', function () {
 
     (function () {
       packdown.write({
-        'files': []
+        'files': {}
       });
     }).should.throw();
 
     (function () {
       packdown.write({
-        'files': [{}]
+        'files': {
+          'noname': {}
+        }
+      });
+    }).should.throw();
+
+    (function () {
+      packdown.write({
+        'files': [],
+        'content': []
       });
     }).should.throw();
   });
@@ -37,13 +46,27 @@ describe('Writer', function () {
   it('should fail with invalid files', function () {
     (function () {
       packdown.write({
-        'files': [{'name': 'space space'}],
-        'name': 'File with spaces'
+        'files': {
+          'space space': {
+            'name': 'space space'
+          }
+        }
       });
     }).should.throw();
   });
 
-  it('should fail with invalid file content');
+  it('should fail with invalid file content', function () {
+    (function () {
+      packdown.write({
+        'files': {
+          'hello-world': {
+            'name': 'hello-world',
+            'content': 123
+          }
+        }
+      });
+    }).should.throw();
+  });
 
   it('should fail with invalid file encoding');
 });

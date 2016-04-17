@@ -1,13 +1,8 @@
 ## Functions
 
 <dl>
-<dt><a href="#isSpaceEncoded">isSpaceEncoded(line)</a> ⇒</dt>
-<dd></dd>
 <dt><a href="#read">read(input, options)</a> ⇒</dt>
 <dd><p>Read text as a Packdown document</p>
-</dd>
-<dt><a href="#FileBlock">FileBlock(file)</a> ⇒</dt>
-<dd><p>Generate a Packdown file text block given a Packdown file object</p>
 </dd>
 <dt><a href="#write">write(document)</a> ⇒</dt>
 <dd><p>Writes a Packdown document from a document object</p>
@@ -26,16 +21,6 @@
 </dd>
 </dl>
 
-<a name="isSpaceEncoded"></a>
-
-## isSpaceEncoded(line) ⇒
-**Kind**: global function  
-**Returns**: Boolean  
-
-| Param | Type |
-| --- | --- |
-| line | <code>String</code> | 
-
 <a name="read"></a>
 
 ## read(input, options) ⇒
@@ -48,18 +33,6 @@ Read text as a Packdown document
 | --- | --- | --- |
 | input | <code>String</code> |  |
 | options | <code>Object</code> | {disableSpaceEncoding} |
-
-<a name="FileBlock"></a>
-
-## FileBlock(file) ⇒
-Generate a Packdown file text block given a Packdown file object
-
-**Kind**: global function  
-**Returns**: String  
-
-| Param | Type |
-| --- | --- |
-| file | <code>File</code> | 
 
 <a name="write"></a>
 

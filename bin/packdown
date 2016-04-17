@@ -35,6 +35,10 @@ program
       extract(_input, _output)
         .then(function (files) {
           console.log(pluralize('file', files, true) + ' extracted');
+        })
+        .catch(function (e) {
+          console.error('Error extracting files');
+          throw e;
         });
     }
 

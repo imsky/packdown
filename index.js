@@ -8,6 +8,7 @@ var normalizePath = require('./vendor/normalize-path');
 var FOUR_SPACES = '    ';
 
 /**
+ * @private
  * @param {String} line
  * @return Boolean
  */
@@ -78,6 +79,7 @@ exports.read = function PackdownReader (input, options) {
 
 /**
  * Generate a Packdown file text block given a Packdown file object
+ * @private
  * @param {File} file
  * @return String
  */
@@ -153,6 +155,10 @@ exports.write = function Writer (document) {
 
   if (!Array.isArray(content)) {
     throw Error('Invalid content provided');
+  }
+
+  if (Array.isArray(files)) {
+    throw Error('Files should be a map');
   }
 
   return content.map(function (line) {
