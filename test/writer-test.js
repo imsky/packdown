@@ -3,13 +3,13 @@ var fs = require('fs');
 var chai = require('chai');
 chai.should();
 
-var writer = require('../lib/writer');
+var packdown = require('../index');
 var basicDocument = require('./docs/basic.json');
 var fixtures = require('./fixtures');
 
 describe('Writer', function () {
   it('should write a basic document', function () {
-    var output = writer(basicDocument);
+    var output = packdown.write(basicDocument);
 
     var expected = fixtures.documents.basic;
 
@@ -18,17 +18,17 @@ describe('Writer', function () {
 
   it('should fail with invalid file list', function () {
     (function () {
-      writer({});
+      packdown.write({});
     }).should.throw();
 
     (function () {
-      writer({
+      packdown.write({
         'files': []
       });
     }).should.throw();
 
     (function () {
-      writer({
+      packdown.write({
         'files': [{}]
       });
     }).should.throw();
@@ -36,7 +36,7 @@ describe('Writer', function () {
 
   it('should fail with invalid files', function () {
     (function () {
-      writer({
+      packdown.write({
         'files': [{'name': 'space space'}],
         'name': 'File with spaces'
       });
