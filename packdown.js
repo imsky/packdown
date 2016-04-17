@@ -10,38 +10,20 @@ Issues:  https://github.com/imsky/packdown/issues
 */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Packdown = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var version = require('./lib/version');
-
 var write = require('./lib/writer');
 var read = require('./lib/reader');
-var add = require('./lib/add');
-var remove = require('./lib/remove');
-var template=  require('./lib/template');
 var filesToDoc = require('./lib/files-to-doc');
 
-exports.write = write;
+var templayed = require('./vendor/templayed');
+var version = require('./packdown-version');
 
-exports.read = read;
-
-exports.add = add;
-
-exports.remove = remove;
-
-exports.filesToDoc = filesToDoc;
-
-exports.template = template;
-
-exports.version = version;
-
-},{"./lib/add":2,"./lib/files-to-doc":4,"./lib/reader":6,"./lib/remove":7,"./lib/template":8,"./lib/version":9,"./lib/writer":10}],2:[function(require,module,exports){
 /**
- * Description
- * @method exports
- * @param {} document
- * @param {} file
- * @return oldFile
+ * Add a file object to a document object
+ * @param {Object} document
+ * @param {Object} file
+ * @return A file already existing at the added path or null
  */
-module.exports = function (document, file) {
+exports.add = function (document, file) {
   var oldFile = document.files[file.name] ? document.files[file.name] : null;
 
   document.files[file.name] = file;
@@ -54,19 +36,64 @@ module.exports = function (document, file) {
 
   return oldFile;
 };
-},{}],3:[function(require,module,exports){
+
+/**
+ * Remove a file at specified path from a Packdown document
+ * @param {} document
+ * @param {} path
+ * @return The deleted file, if any, or null
+ */
+exports.remove = function (document, path) {
+  var oldFile = document.files[path] ? document.files[path] : null;
+
+  if (oldFile) {
+    delete document.files[path];
+
+    if (Array.isArray(document.content)) {
+      document.content = document.content.filter(function (chunk) {
+        return typeof chunk === 'string' || chunk.file !== path;
+      });
+    }
+  }
+
+  return oldFile;
+};
+
+exports.write = write;
+
+exports.read = read;
+
+exports.filesToDoc = filesToDoc;
+
+/**
+ * Render a Mustache template
+ * @method exports
+ * @param {String} template - The template to render
+ * @param {Object} variables - The values used within template
+ * @return String
+ */
+exports.template = function (template, variables) {
+  return templayed(template)(variables);
+};
+
+exports.version = {
+  'package': version.package,
+  'format': version.format
+};
+
+},{"./lib/files-to-doc":3,"./lib/reader":5,"./lib/writer":6,"./packdown-version":8,"./vendor/templayed":9}],2:[function(require,module,exports){
 exports.FOUR_SPACES = '    ';
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var normalizePath = require('normalize-path');
 
 /**
  * Convert a set of files to a document
- * @method
+ * @method filesToDoc
  * @param {String} root Root directory
  * @param files An array of file objects with at least a path and a content property
- * @return document
+ * @return Document object
  */
-module.exports = function (root, files) {
+module.exports = function filesToDoc (root, files) {
   var document = {
     'content': []
   };
@@ -121,18 +148,18 @@ module.exports = function (root, files) {
 
   return document;
 };
-},{"normalize-path":11}],5:[function(require,module,exports){
+},{"normalize-path":7}],4:[function(require,module,exports){
 var rFileHeading = /^\#{1,6} \/([a-z0-9\.\,\_\-\(\)\/]+)$/i;
 var rCodeHeading = /^```([a-z0-9][\-a-z0-9]*)$/i;
 var rCodeEnd = /^```$/;
 
 /**
  * Parse text into Packdown document
- * @method
+ * @method PackdownLineParser
  * @param {String} input
- * @return Packdown document
+ * @return Document object
  */
-exports.line = function (input) {
+exports.line = function PackdownLineParser (input) {
   var document = {
     'files': {},
     'content': []
@@ -172,7 +199,7 @@ exports.line = function (input) {
 
       if (stack.length === 1) {
         file.tag = codeTag;
-        stack.push('CODE');
+        stack.push(codeTag || 'txt');
       } else if (stack.length === 2 && !codeTag && file.pending) {
         delete file.pending;
         document.content.push({
@@ -200,13 +227,13 @@ exports.line = function (input) {
   return document;
 };
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var parser = require('./parser').line;
 
 var FOUR_SPACES = require('./constants').FOUR_SPACES;
 
 /**
- * @method
+ * @method isSpaceEncoded
  * @param {String} line
  * @return Boolean
  */
@@ -216,12 +243,12 @@ function isSpaceEncoded (line) {
 
 /**
  * Read text as a Packdown document
- * @method
+ * @method PackdownReader
  * @param {String} input
- * @param {Object} options - Options include: disableSpaceEncoding
- * @return document
+ * @param {Object} options - {disableSpaceEncoding}
+ * @return Document object
  */
-module.exports = function (input, options) {
+module.exports = function PackdownReader (input, options) {
   options = options || {};
 
   if (input.slice(-1) !== '\n') {
@@ -268,59 +295,14 @@ module.exports = function (input, options) {
 
     if (spaceEncoding) {
       file.content = file.content.map(function (line) {
-        return line.replace(/^    /, '');
+        return line.replace(/^ {4}/, '');
       });
     }
   });
 
   return document;
 };
-},{"./constants":3,"./parser":5}],7:[function(require,module,exports){
-/**
- * Remove a file at specified path from a Packdown document
- * @param {} document
- * @param {} path
- * @return The deleted file, if any, or null
- */
-module.exports = function (document, path) {
-  var oldFile = document.files[path] ? document.files[path] : null;
-
-  if (oldFile) {
-    delete document.files[path];
-
-    if (Array.isArray(document.content)) {
-      document.content = document.content.filter(function (chunk) {
-        return typeof chunk === 'string' || chunk.file !== path;
-      });
-    }
-  }
-
-  return oldFile;
-};
-},{}],8:[function(require,module,exports){
-var templayed = require('../vendor/templayed');
-
-/**
- * Render a Mustache template
- * @method exports
- * @param {String} template - The template to render
- * @param {Object} variables - The values used within template
- * @return String
- */
-module.exports = function (template, variables) {
-  return templayed(template)(variables);
-};
-
-},{"../vendor/templayed":13}],9:[function(require,module,exports){
-var version = require('../packdown-version');
-
-module.exports = {
-  'package': version.package,
-  'format': version.format
-};
-},{"../packdown-version":12}],10:[function(require,module,exports){
-var version = require('./version');
-
+},{"./constants":2,"./parser":4}],6:[function(require,module,exports){
 var FOUR_SPACES = require('./constants').FOUR_SPACES;
 
 /**
@@ -379,12 +361,12 @@ function FileBlock (file) {
 }
 
 /**
- * Description
- * @method exports
- * @param {} document
- * @return CallExpression
+ * Writes a Packdown document from a document object
+ * @method Writer
+ * @param {Object} document object
+ * @return String
  */
-module.exports = function (document) {
+module.exports = function Writer (document) {
   var content = document.content;
   var files = document.files;
 
@@ -413,7 +395,7 @@ module.exports = function (document) {
   }).join('\n');
 };
 
-},{"./constants":3,"./version":9}],11:[function(require,module,exports){
+},{"./constants":2}],7:[function(require,module,exports){
 /*!
  * normalize-path <https://github.com/jonschlinkert/normalize-path>
  *
@@ -432,9 +414,9 @@ module.exports = function normalizePath(str, stripTrailing) {
   return str;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports={"package":"0.8.0","format":1}
-},{}],13:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // *
 // * templayed.js (Uncompressed)
 // * The fastest and smallest Mustache compliant Javascript templating library written in 1806 bytes (uncompressed)
