@@ -1,7 +1,7 @@
 /*!
 
 Packdown - Markdown-based file container format
-Version 0.8.0
+Version 0.9.0
 (c) 2015-2016 Ivan Malopinsky - http://imsky.co
 
 License: MIT
@@ -29,7 +29,7 @@ function isSpaceEncoded (line) {
 }
 
 /**
- * Read text as a Packdown document
+ * Generate document object from text input.
  * @param {String} input
  * @param {Object} options - {disableSpaceEncoding}
  * @example
@@ -93,7 +93,7 @@ exports.read = function PackdownReader (input, options) {
 };
 
 /**
- * Generate a Packdown file text block given a Packdown file object
+ * Generate a Packdown file text block given a Packdown file object.
  * @private
  * @param {File} file
  * @return String
@@ -148,7 +148,7 @@ function FileBlock (file) {
 }
 
 /**
- * Writes a Packdown document from a document object
+ * Generate Packdown document from document object.
  * @param {Object} document object
  * @example
  * var document = {
@@ -199,7 +199,7 @@ exports.write = function Writer (document) {
 };
 
 /**
- * Add a file object to a document object
+ * Add a file object to a document object.
  * @param {Object} document
  * @param {Object} file
  * @example
@@ -210,7 +210,7 @@ exports.write = function Writer (document) {
  * var input = 'Hello world';
  * var document = packdown.read(input);
  * var output = packdown.add(document, file);
- * @return A file already existing at the added path or null
+ * @return `null` or overwritten file
  */
 exports.add = function (document, file) {
   var oldFile = document.files[file.name] ? document.files[file.name] : null;
@@ -227,14 +227,14 @@ exports.add = function (document, file) {
 };
 
 /**
- * Remove a file at specified path from a Packdown document
+ * Remove specified path from Packdown document.
  * @param {} document
  * @param {} path
  * @example
  * var input = ['# /foo', '\`\`\`', 'bar', '\`\`\`'].join('\n');
  * var document = packdown.read(input);
  * var output = packdown.remove(document, 'foo');
- * @return The deleted file, if any, or null
+ * @return `null` or deleted file
  */
 exports.remove = function (document, path) {
   var oldFile = document.files[path] ? document.files[path] : null;
@@ -253,7 +253,7 @@ exports.remove = function (document, path) {
 };
 
 /**
- * Convert a set of files to a document
+ * Convert a set of files to a document object.
  * @param {String} root Root directory
  * @param {Array} files An array of file objects with at least a path and a content property
  * @example
@@ -305,6 +305,7 @@ exports.filesToDoc = function filesToDoc (root, files) {
       tag = tag.slice(1);
     }
 
+    //todo: dasherize filePath
     return {
       'name': filePath,
       'tag': tag,
@@ -319,7 +320,7 @@ exports.filesToDoc = function filesToDoc (root, files) {
 };
 
 /**
- * Render a Mustache template
+ * Render a Mustache template.
  * @param {String} template - The template to render
  * @param {Object} variables - The values used within template
  * @example
@@ -418,7 +419,7 @@ module.exports = function PackdownLineParser (input) {
 };
 
 },{}],3:[function(require,module,exports){
-module.exports={"package":"0.8.0","format":1}
+module.exports={"package":"0.9.0","format":1}
 },{}],4:[function(require,module,exports){
 /*!
  * normalize-path <https://github.com/jonschlinkert/normalize-path>

@@ -2,29 +2,29 @@
 
 <dl>
 <dt><a href="#read">read(input, options)</a> ⇒</dt>
-<dd><p>Read text as a Packdown document</p>
+<dd><p>Generate document object from text input.</p>
 </dd>
 <dt><a href="#write">write(document)</a> ⇒</dt>
-<dd><p>Writes a Packdown document from a document object</p>
+<dd><p>Generate Packdown document from document object.</p>
 </dd>
 <dt><a href="#add">add(document, file)</a> ⇒</dt>
-<dd><p>Add a file object to a document object</p>
+<dd><p>Add a file object to a document object.</p>
 </dd>
 <dt><a href="#remove">remove(document, path)</a> ⇒</dt>
-<dd><p>Remove a file at specified path from a Packdown document</p>
+<dd><p>Remove specified path from Packdown document.</p>
 </dd>
 <dt><a href="#filesToDoc">filesToDoc(root, files)</a> ⇒</dt>
-<dd><p>Convert a set of files to a document</p>
+<dd><p>Convert a set of files to a document object.</p>
 </dd>
 <dt><a href="#template">template(template, variables)</a> ⇒</dt>
-<dd><p>Render a Mustache template</p>
+<dd><p>Render a Mustache template.</p>
 </dd>
 </dl>
 
 <a name="read"></a>
 
 ## read(input, options) ⇒
-Read text as a Packdown document
+Generate document object from text input.
 
 **Kind**: global function  
 **Returns**: Document object  
@@ -42,7 +42,7 @@ var output = packdown.read(input);
 <a name="write"></a>
 
 ## write(document) ⇒
-Writes a Packdown document from a document object
+Generate Packdown document from document object.
 
 **Kind**: global function  
 **Returns**: String  
@@ -69,10 +69,10 @@ var output = packdown.write(document);
 <a name="add"></a>
 
 ## add(document, file) ⇒
-Add a file object to a document object
+Add a file object to a document object.
 
 **Kind**: global function  
-**Returns**: A file already existing at the added path or null  
+**Returns**: `null` or overwritten file  
 
 | Param | Type |
 | --- | --- |
@@ -92,10 +92,10 @@ var output = packdown.add(document, file);
 <a name="remove"></a>
 
 ## remove(document, path) ⇒
-Remove a file at specified path from a Packdown document
+Remove specified path from Packdown document.
 
 **Kind**: global function  
-**Returns**: The deleted file, if any, or null  
+**Returns**: `null` or deleted file  
 
 | Param |
 | --- |
@@ -111,7 +111,7 @@ var output = packdown.remove(document, 'foo');
 <a name="filesToDoc"></a>
 
 ## filesToDoc(root, files) ⇒
-Convert a set of files to a document
+Convert a set of files to a document object.
 
 **Kind**: global function  
 **Returns**: Document object  
@@ -130,7 +130,7 @@ var document = packdown.filesToDoc(root, files);
 <a name="template"></a>
 
 ## template(template, variables) ⇒
-Render a Mustache template
+Render a Mustache template.
 
 **Kind**: global function  
 **Returns**: String  
