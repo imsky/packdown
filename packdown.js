@@ -32,6 +32,9 @@ function isSpaceEncoded (line) {
  * Read text as a Packdown document
  * @param {String} input
  * @param {Object} options - {disableSpaceEncoding}
+ * @example
+ * var input = ['# /foo', '\`\`\`', 'content', '\`\`\`'].join('\n');
+ * var output = packdown.read(input);
  * @return Document object
  */
 exports.read = function PackdownReader (input, options) {
@@ -147,6 +150,19 @@ function FileBlock (file) {
 /**
  * Writes a Packdown document from a document object
  * @param {Object} document object
+ * @example
+ * var document = {
+ *   'files': {
+ *     'foo': {
+ *       'name': 'foo',
+ *       'content': 'bar'
+ *     }
+ *   },
+ *   'content': [{
+ *     'file': 'foo'
+ *   }]
+ * };
+ * var output = packdown.write(document);
  * @return String
  */
 exports.write = function Writer (document) {
@@ -186,6 +202,14 @@ exports.write = function Writer (document) {
  * Add a file object to a document object
  * @param {Object} document
  * @param {Object} file
+ * @example
+ * var file = {
+ *  'name': 'foo',
+ *  'content': 'bar'
+ * };
+ * var input = 'Hello world';
+ * var document = packdown.read(input);
+ * var output = packdown.add(document, file);
  * @return A file already existing at the added path or null
  */
 exports.add = function (document, file) {
@@ -206,6 +230,10 @@ exports.add = function (document, file) {
  * Remove a file at specified path from a Packdown document
  * @param {} document
  * @param {} path
+ * @example
+ * var input = ['# /foo', '\`\`\`', 'bar', '\`\`\`'].join('\n');
+ * var document = packdown.read(input);
+ * var output = packdown.remove(document, 'foo');
  * @return The deleted file, if any, or null
  */
 exports.remove = function (document, path) {
@@ -227,7 +255,11 @@ exports.remove = function (document, path) {
 /**
  * Convert a set of files to a document
  * @param {String} root Root directory
- * @param files An array of file objects with at least a path and a content property
+ * @param {Array} files An array of file objects with at least a path and a content property
+ * @example
+ * var root = '/foo';
+ * var files = [{'content': 'bar', 'path': '/foo/bar'}];
+ * var document = packdown.filesToDoc(root, files);
  * @return Document object
  */
 exports.filesToDoc = function filesToDoc (root, files) {
@@ -290,6 +322,12 @@ exports.filesToDoc = function filesToDoc (root, files) {
  * Render a Mustache template
  * @param {String} template - The template to render
  * @param {Object} variables - The values used within template
+ * @example
+ * var template = '{{foo}}';
+ * var variables = {
+ *  'foo': 'bar'
+ * };
+ * var output = packdown.template(template, variables);
  * @return String
  */
 exports.template = function (template, variables) {

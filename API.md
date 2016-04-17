@@ -34,6 +34,11 @@ Read text as a Packdown document
 | input | <code>String</code> |  |
 | options | <code>Object</code> | {disableSpaceEncoding} |
 
+**Example**  
+```js
+var input = ['# /foo', '\`\`\`', 'content', '\`\`\`'].join('\n');
+var output = packdown.read(input);
+```
 <a name="write"></a>
 
 ## write(document) ⇒
@@ -46,6 +51,21 @@ Writes a Packdown document from a document object
 | --- | --- | --- |
 | document | <code>Object</code> | object |
 
+**Example**  
+```js
+var document = {
+  'files': {
+    'foo': {
+      'name': 'foo',
+      'content': 'bar'
+    }
+  },
+  'content': [{
+    'file': 'foo'
+  }]
+};
+var output = packdown.write(document);
+```
 <a name="add"></a>
 
 ## add(document, file) ⇒
@@ -59,6 +79,16 @@ Add a file object to a document object
 | document | <code>Object</code> | 
 | file | <code>Object</code> | 
 
+**Example**  
+```js
+var file = {
+ 'name': 'foo',
+ 'content': 'bar'
+};
+var input = 'Hello world';
+var document = packdown.read(input);
+var output = packdown.add(document, file);
+```
 <a name="remove"></a>
 
 ## remove(document, path) ⇒
@@ -72,6 +102,12 @@ Remove a file at specified path from a Packdown document
 | document | 
 | path | 
 
+**Example**  
+```js
+var input = ['# /foo', '\`\`\`', 'bar', '\`\`\`'].join('\n');
+var document = packdown.read(input);
+var output = packdown.remove(document, 'foo');
+```
 <a name="filesToDoc"></a>
 
 ## filesToDoc(root, files) ⇒
@@ -83,8 +119,14 @@ Convert a set of files to a document
 | Param | Type | Description |
 | --- | --- | --- |
 | root | <code>String</code> | Root directory |
-| files |  | An array of file objects with at least a path and a content property |
+| files | <code>Array</code> | An array of file objects with at least a path and a content property |
 
+**Example**  
+```js
+var root = '/foo';
+var files = [{'content': 'bar', 'path': '/foo/bar'}];
+var document = packdown.filesToDoc(root, files);
+```
 <a name="template"></a>
 
 ## template(template, variables) ⇒
@@ -98,3 +140,11 @@ Render a Mustache template
 | template | <code>String</code> | The template to render |
 | variables | <code>Object</code> | The values used within template |
 
+**Example**  
+```js
+var template = '{{foo}}';
+var variables = {
+ 'foo': 'bar'
+};
+var output = packdown.template(template, variables);
+```
