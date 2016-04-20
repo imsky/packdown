@@ -39,6 +39,16 @@ describe('Compress', function () {
     return compress('.');
   });
 
+  it('fails if dasherizing causes a name collision', function () {
+    mock(Object.assign({
+      'hello world.js': 'foo'
+    }, exampleFiles.files));
+
+    return compress('.').should.eventually.be.rejected;
+
+    mock.restore();
+  });
+
   it('fails with no inputs', function () {
     return compress().should.eventually.be.rejected;
   });

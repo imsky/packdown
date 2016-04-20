@@ -14,6 +14,6 @@
         "no-empty": 2,
         "no-undef": 2,
         "semi": [1, "always"],
-        "func-names": 2
+        "func-names": 1
     }
 }
