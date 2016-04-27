@@ -1,5 +1,3 @@
-var version = require('./packdown-version');
-
 var parser = require('./lib/parser');
 
 var templayed = require('./vendor/templayed');
@@ -323,7 +321,4 @@ exports.template = function (template, variables) {
   return templayed(template)(variables);
 };
 
-exports.version = {
-  'package': version.package,
-  'format': version.format
-};
+exports.version = 'PACKDOWN_VERSION';

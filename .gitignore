@@ -2,6 +2,7 @@
 # qkst.io/dotfiles/gitignore
 
 coverage
+banner.txt
 
 # JavaScript
 node_modules/
