@@ -1,7 +1,6 @@
 {
   "name": "packdownjs",
   "version": "0.9.0",
-  "formatVersion": 1,
   "author": "Ivan Malopinsky",
   "license": "MIT",
   "description": "",
@@ -19,19 +18,22 @@
     "browserify": "browserify -s Packdown index.js -o packdown.js",
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
     "format": "jsfmt --write -v lib",
-    "lint": "eslint lib/*.js lib/commands/*.js bin/*.js",
+    "lint": "eslint index.js lib/*.js lib/commands/*.js bin/*.js",
     "quality": "npm run format && npm run lint && npm run test",
-    "banner": "node tools/banner",
     "docs": "jsdoc2md --property-list-format table 'index.js' > API.md",
-    "prebuild": "node tools/version",
     "build": "npm run quality && npm run browserify",
-    "postbuild": "npm run uglify && npm run banner && npm run docs"
+    "postbuild": "npm run uglify && node scripts/version && npm run docs"
   },
   "keywords": [
     "markdown",
     "pack",
     "file",
-    "collection"
+    "collection",
+    "template",
+    "boilerplate",
+    "scaffold",
+    "gist",
+    "fiddle"
   ],
   "bugs": {
     "url": "https://github.com/imsky/packdown/issues"

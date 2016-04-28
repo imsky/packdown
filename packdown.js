@@ -10,8 +10,6 @@ Issues:  https://github.com/imsky/packdown/issues
 */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Packdown = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var version = require('./packdown-version');
-
 var parser = require('./lib/parser');
 
 var templayed = require('./vendor/templayed');
@@ -335,12 +333,9 @@ exports.template = function (template, variables) {
   return templayed(template)(variables);
 };
 
-exports.version = {
-  'package': version.package,
-  'format': version.format
-};
+exports.version = 'PACKDOWN_VERSION';
 
-},{"./lib/parser":2,"./packdown-version":3,"./vendor/normalize-path":4,"./vendor/templayed":5}],2:[function(require,module,exports){
+},{"./lib/parser":2,"./vendor/normalize-path":3,"./vendor/templayed":4}],2:[function(require,module,exports){
 var rFileHeading = /^\#{1,6} \/([a-z0-9\.\,\_\-\(\)\/]+)$/i;
 var rCodeHeading = /^```([a-z0-9][\-a-z0-9]*)$/i;
 var rCodeEnd = /^```$/;
@@ -419,8 +414,6 @@ module.exports = function PackdownLineParser (input) {
 };
 
 },{}],3:[function(require,module,exports){
-module.exports={"package":"0.9.0","format":1}
-},{}],4:[function(require,module,exports){
 /*!
  * normalize-path <https://github.com/jonschlinkert/normalize-path>
  *
@@ -439,7 +432,7 @@ module.exports = function normalizePath(str, stripTrailing) {
   return str;
 };
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // *
 // * templayed.js (Uncompressed)
 // * The fastest and smallest Mustache compliant Javascript templating library written in 1806 bytes (uncompressed)

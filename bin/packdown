@@ -6,14 +6,14 @@ var promise = require('bluebird');
 var pluralize = require('pluralize');
 var program = require('commander');
 
-var packdown = require('../index');
+var package = require('../package');
 var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
 var add = require('../lib/commands/add');
 var remove = require('../lib/commands/remove');
 var template = require('../lib/commands/template');
 
-program.version(packdown.version.packageVersion);
+program.version(package.version);
 
 program
   .command('compress <input> [output]')
