@@ -317,7 +317,9 @@ exports.filesToDoc = function filesToDoc (root, files) {
  * var output = packdown.template(template, variables);
  * @return String
  */
-exports.template = function (template, variables) {
+exports.template = function templateDocument (template, variables) {
+  //todo: '@/path' syntax
+  //todo: '{"key": "value"}' syntax
   return templayed(template)(variables);
 };
 
