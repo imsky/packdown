@@ -27,13 +27,13 @@ program
       });
   });
 
-//todo: add --vars option
 program
   .command('extract <input> [output]')
+  .option('-v --vars', 'Template with variables')
   .description('extract <input> file into [output] directory')
-  .action(function (input, output) {
+  .action(function (input, output, options) {
     function action (_input, _output) {
-      extract(_input, _output)
+      extract(_input, _output, options.vars)
         .then(function (files) {
           console.log(pluralize('file', files, true) + ' extracted');
         })
@@ -56,7 +56,7 @@ program
 
       process.stdin.on('end', function () {
         stdin = Buffer.concat(stdin);
-        action(stdin, output || 'stdin');
+        action(stdin.toString('utf8'), output || 'stdin');
       });
     } else {
       action(input, output);

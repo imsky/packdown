@@ -13,6 +13,8 @@ describe('Extract', function () {
   beforeEach(function () {
     mock({
       'example.md': fixtures.documents.example,
+      'basic.md': fixtures.documents.basic,
+      'template.json': fixtures.variables.template,
       'foo': {
         'bar': 'baz'
       }
@@ -43,6 +45,14 @@ describe('Extract', function () {
 
   it('works with a Buffer as input without a named output', function () {
     return extract(fs.readFileSync('example.md'));
+  });
+
+  it('works with variables', function () {
+    return extract('basic.md', null, 'template.json')
+      .then(function () {
+        var res = fs.readFileSync('./basic/hello-world', 'utf8');
+        res.indexOf('baz').should.equal(0);
+      });
   });
 
   it('fails with directory', function () {
