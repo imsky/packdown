@@ -63,17 +63,6 @@ program
     }
   });
 
-//todo: get rid of this as a separate command
-program
-  .command('template <input> <variables> [output]')
-  .description('extract <input> file templated with <variables> file to [output] directory')
-  .action(function (input, variables, output) {
-    template(input, variables, output)
-      .then(function(files) {
-        console.log(pluralize('file', files, true) + ' extracted');
-      });
-  });
-
 program
   .command('add <file> <document>')
   .description('add <file> to Packdown <document>')
