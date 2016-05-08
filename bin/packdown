@@ -11,13 +11,11 @@ var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
 var add = require('../lib/commands/add');
 var remove = require('../lib/commands/remove');
-var template = require('../lib/commands/template');
 
 program.version(package.version);
 
 program
   .command('compress <input> [output]')
-  .description('compress <input> and save to [output]')
   .action(function (input, output) {
     compress(input, output)
       .then(function (res) {
@@ -28,9 +26,8 @@ program
   });
 
 program
-  .command('extract <input> [output]')
+  .command('extract <input> <output>')
   .option('-v --vars', 'Template with variables')
-  .description('extract <input> file into [output] directory')
   .action(function (input, output, options) {
     function action (_input, _output) {
       extract(_input, _output, options.vars)
@@ -65,7 +62,6 @@ program
 
 program
   .command('add <file> <document>')
-  .description('add <file> to Packdown <document>')
   .action(function (file, document) {
     add(file, document)
       .then(function (res) {
@@ -79,7 +75,6 @@ program
 
 program
   .command('remove <file> <document>')
-  .description('remove <file> from Packdown <document>')
   .action(function (file, document) {
     remove(file, document)
       .then(function (res) {
@@ -91,8 +86,26 @@ program
       });
   });
 
+program.on('--help', function () {
+  var help = [
+      '  Examples:',
+      '    compress <input> [output]',
+      '      $ packdown compress foo bar  # compresses foo dir into bar file',
+      '      $ packdown compress foo      # compresses foo dir, sends to stdout',
+      '    extract [options] <input> <output>',
+      '      $ packdown extract foo bar   # extracts foo file into bar directory',
+      '      # templates foo file with vars.json, then extracts into bar directory',
+      '      $ packdown extract -v vars.json foo bar',
+      '    add <file> <document>',
+      '      $ packdown add foo bar       # adds foo to bar document at /foo path',
+      '    remove <file> <document>',
+      '      $ packdown remove foo bar    # removes /foo path from bar document'
+    ];
+  console.log(help.join('\n'));
+})
+
 if (process.argv.slice(2).length) {
   program.parse(process.argv);
 } else {
-  program.outputHelp();
+  program.help();
 }
