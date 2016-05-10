@@ -11,47 +11,33 @@ Packdown stores files inside Markdown documents.
 
 ## Command line usage
 
-
-### Extracting a document
-
 ```
-packdown extract doc.md outdir
-```
+Usage: packdown [options] [command]
 
-Packdown can also extract from standard input:
+Commands:
 
-```
-cat doc.md | packdown extract - outdir
-```
+  compress <input> [output]         
+  extract [options] <input> <output>
+  add <file> <document>             
+  remove <file> <document>          
 
-### Extracting a document with a template
+Options:
 
-```
-packdown template doc.md vars.json outdir
-```
+  -h, --help     output usage information
+  -V, --version  output the version number
 
-### Compressing a directory
-
-```
-packdown compress indir doc.md
-```
-
-Packdown output can also be redirected:
-
-```
-packdown compress indir | grep foo
-```
-
-### Adding a file to a document
-
-```
-packdown add doc.md file.txt
-```
-
-### Removing a file from a document
-
-```
-packdown remove doc.md file.txt
+Examples:
+  compress <input> [output]
+    $ packdown compress foo bar  # compresses foo dir into bar file
+    $ packdown compress foo      # compresses foo dir, sends to stdout
+  extract [options] <input> <output>
+    $ packdown extract foo bar   # extracts foo file into bar directory
+    # templates foo file with vars.json, then extracts into bar directory
+    $ packdown extract -v vars.json foo bar
+  add <file> <document>
+    $ packdown add foo bar       # adds foo to bar document at /foo path
+  remove <file> <document>
+    $ packdown remove foo bar    # removes /foo path from bar document
 ```
 
 ## Building
