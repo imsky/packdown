@@ -48,7 +48,7 @@ describe('Extract', function () {
   });
 
   it('works with variables', function () {
-    return extract('basic.md', null, 'template.json')
+    return extract('basic.md', 'basic', 'template.json')
       .then(function () {
         var res = fs.readFileSync('./basic/hello-world', 'utf8');
         res.indexOf('baz').should.equal(0);
