@@ -21,7 +21,6 @@
     "lint": "eslint index.js lib/*.js lib/commands/*.js bin/*.js",
     "quality": "npm run format && npm run lint && npm run test",
     "docs": "node scripts/docs > README.md",
-    "_docs": "jsdoc2md --property-list-format table 'index.js' > API.md",
     "build": "npm run quality && npm run browserify",
     "postbuild": "npm run uglify && node scripts/version && npm run docs"
   },
