@@ -2,10 +2,11 @@
 <html>
 <head>
 <title>Packdown</title>
+<link rel="stylesheet" href="web/packdown.css">
 </head>
 <body>
   <header>
-    <img src="images/packdown-logo-solid.svg" height="82"> <h1>Packdown</h1>
+    <img src="web/packdown-logo-solid.svg" height="82"> <h1>Packdown</h1>
     <p>Packdown stores files inside Markdown.</p>
   </header>
   <main>
@@ -16,17 +17,49 @@
       <a href="https://github.com/imsky/packdown">Learn more in docs</a>
     </section>
     <section>
-      <!-- templating description -->
-    </section>
-    <section>
       <!-- "gist" demo -->
+      <textarea>
+# A JavaScript example
+
+## /index.html
+
+```
+<script src="example.js"></script>
+```
+
+# /example.js
+
+```
+alert('Hello world!');
+```
+      </textarea>
     </section>
     <section>
       <!-- "fiddle" demo -->
+      <textarea>
+# A JavaScript example
+
+## /index.html
+
+```
+<script src="example.js"></script>
+```
+
+# /example.js
+
+```
+alert('Hello world!');
+```
+      </textarea>
+    </section>
+    <section>
+      <!-- templating/boilerplate section -->
     </section>
   </main>
   <footer>
     Made by <a href="http://imsky.co/">Ivan Malopinsky</a> &bull; <a href="https://github.com/imsky/packdown">Source on Github</a>
   </footer>
+  <script src="packdown.min.js"></script>
+  <script src="web/packdown-site.js"></script>
 </body>
 </html>
