@@ -9,7 +9,6 @@ var program = require('commander');
 var package = require('../package');
 var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
-var add = require('../lib/commands/add');
 var remove = require('../lib/commands/remove');
 
 program.version(package.version);
@@ -61,19 +60,6 @@ program
   });
 
 program
-  .command('add <file> <document>')
-  .action(function (file, document) {
-    add(file, document)
-      .then(function (res) {
-        if (res.status === 'added') {
-          console.log(file + ' added');
-        } else if (res.status === 'replaced') {
-          console.log(file + ' replaced');
-        }
-      });
-  });
-
-program
   .command('remove <file> <document>')
   .action(function (file, document) {
     remove(file, document)
@@ -96,8 +82,6 @@ program.on('--help', function () {
       '      $ packdown extract foo bar   # extracts foo file into bar directory',
       '      # templates foo file with vars.json, then extracts into bar directory',
       '      $ packdown extract -v vars.json foo bar',
-      '    add <file> <document>',
-      '      $ packdown add foo bar       # adds foo to bar document at /foo path',
       '    remove <file> <document>',
       '      $ packdown remove foo bar    # removes /foo path from bar document'
     ];

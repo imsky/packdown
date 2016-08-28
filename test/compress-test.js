@@ -45,8 +45,6 @@ describe('Compress', function () {
     }, exampleFiles.files));
 
     return compress('.').should.eventually.be.rejected;
-
-    mock.restore();
   });
 
   it('fails with no inputs', function () {
