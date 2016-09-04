@@ -9,7 +9,6 @@ var program = require('commander');
 var package = require('../package');
 var compress = require('../lib/commands/compress');
 var extract = require('../lib/commands/extract');
-var remove = require('../lib/commands/remove');
 
 program.version(package.version);
 
@@ -57,19 +56,6 @@ program
     } else {
       action(input, output);
     }
-  });
-
-program
-  .command('remove <file> <document>')
-  .action(function (file, document) {
-    remove(file, document)
-      .then(function (res) {
-        if (res.status === 'not found') {
-          console.log(file + ' not found');
-        } else if (res.status === 'removed') {
-          console.log(file + ' removed');
-        }
-      });
   });
 
 program.on('--help', function () {

@@ -185,32 +185,6 @@ exports.write = function Writer (document) {
 };
 
 /**
- * Remove specified path from Packdown document.
- * @param {} document
- * @param {} path
- * @example
- * var input = ['# /foo', '\`\`\`', 'bar', '\`\`\`'].join('\n');
- * var document = packdown.read(input);
- * var output = packdown.remove(document, 'foo');
- * @return `null` or deleted file
- */
-exports.remove = function (document, path) {
-  var oldFile = document.files[path] ? document.files[path] : null;
-
-  if (oldFile) {
-    delete document.files[path];
-
-    if (Array.isArray(document.content)) {
-      document.content = document.content.filter(function (chunk) {
-        return typeof chunk === 'string' || chunk.file !== path;
-      });
-    }
-  }
-
-  return oldFile;
-};
-
-/**
  * Convert a set of files to a document object.
  * @param {String} root Root directory
  * @param {Array} files An array of file objects with at least a path and a content property
