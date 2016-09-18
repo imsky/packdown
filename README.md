@@ -20,8 +20,6 @@ Packdown stores files inside Markdown documents.
 
     compress <input> [output]         
     extract [options] <input> <output>
-    add <file> <document>             
-    remove <file> <document>          
 
   Options:
 
@@ -36,10 +34,6 @@ Packdown stores files inside Markdown documents.
       $ packdown extract foo bar   # extracts foo file into bar directory
       # templates foo file with vars.json, then extracts into bar directory
       $ packdown extract -v vars.json foo bar
-    add <file> <document>
-      $ packdown add foo bar       # adds foo to bar document at /foo path
-    remove <file> <document>
-      $ packdown remove foo bar    # removes /foo path from bar document
 
 ```
 
@@ -51,12 +45,6 @@ Packdown stores files inside Markdown documents.
 </dd>
 <dt><a href="#write">write(document)</a> ⇒</dt>
 <dd><p>Generate Packdown document from document object.</p>
-</dd>
-<dt><a href="#add">add(document, file)</a> ⇒</dt>
-<dd><p>Add a file object to a document object.</p>
-</dd>
-<dt><a href="#remove">remove(document, path)</a> ⇒</dt>
-<dd><p>Remove specified path from Packdown document.</p>
 </dd>
 <dt><a href="#filesToDoc">filesToDoc(root, files)</a> ⇒</dt>
 <dd><p>Convert a set of files to a document object.</p>
@@ -110,48 +98,6 @@ var document = {
   }]
 };
 var output = packdown.write(document);
-```
-<a name="add"></a>
-
-## add(document, file) ⇒
-Add a file object to a document object.
-
-**Kind**: global function  
-**Returns**: `null` or overwritten file  
-
-| Param | Type |
-| --- | --- |
-| document | <code>Object</code> | 
-| file | <code>Object</code> | 
-
-**Example**  
-```js
-var file = {
- 'name': 'foo',
- 'content': 'bar'
-};
-var input = 'Hello world';
-var document = packdown.read(input);
-var output = packdown.add(document, file);
-```
-<a name="remove"></a>
-
-## remove(document, path) ⇒
-Remove specified path from Packdown document.
-
-**Kind**: global function  
-**Returns**: `null` or deleted file  
-
-| Param |
-| --- |
-| document | 
-| path | 
-
-**Example**  
-```js
-var input = ['# /foo', '\`\`\`', 'bar', '\`\`\`'].join('\n');
-var document = packdown.read(input);
-var output = packdown.remove(document, 'foo');
 ```
 <a name="filesToDoc"></a>
 

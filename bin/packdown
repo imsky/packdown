@@ -67,9 +67,7 @@ program.on('--help', function () {
       '    extract [options] <input> <output>',
       '      $ packdown extract foo bar   # extracts foo file into bar directory',
       '      # templates foo file with vars.json, then extracts into bar directory',
-      '      $ packdown extract -v vars.json foo bar',
-      '    remove <file> <document>',
-      '      $ packdown remove foo bar    # removes /foo path from bar document'
+      '      $ packdown extract -v vars.json foo bar'
     ];
   console.log(help.join('\n'));
 })

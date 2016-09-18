@@ -197,60 +197,6 @@ exports.write = function Writer (document) {
 };
 
 /**
- * Add a file object to a document object.
- * @param {Object} document
- * @param {Object} file
- * @example
- * var file = {
- *  'name': 'foo',
- *  'content': 'bar'
- * };
- * var input = 'Hello world';
- * var document = packdown.read(input);
- * var output = packdown.add(document, file);
- * @return `null` or overwritten file
- */
-exports.add = function (document, file) {
-  var oldFile = document.files[file.name] ? document.files[file.name] : null;
-
-  document.files[file.name] = file;
-
-  if (!oldFile) {
-    document.content.push({
-      'file': file.name
-    });
-  }
-
-  return oldFile;
-};
-
-/**
- * Remove specified path from Packdown document.
- * @param {} document
- * @param {} path
- * @example
- * var input = ['# /foo', '\`\`\`', 'bar', '\`\`\`'].join('\n');
- * var document = packdown.read(input);
- * var output = packdown.remove(document, 'foo');
- * @return `null` or deleted file
- */
-exports.remove = function (document, path) {
-  var oldFile = document.files[path] ? document.files[path] : null;
-
-  if (oldFile) {
-    delete document.files[path];
-
-    if (Array.isArray(document.content)) {
-      document.content = document.content.filter(function (chunk) {
-        return typeof chunk === 'string' || chunk.file !== path;
-      });
-    }
-  }
-
-  return oldFile;
-};
-
-/**
  * Convert a set of files to a document object.
  * @param {String} root Root directory
  * @param {Array} files An array of file objects with at least a path and a content property
@@ -329,7 +275,9 @@ exports.filesToDoc = function filesToDoc (root, files) {
  * var output = packdown.template(template, variables);
  * @return String
  */
-exports.template = function (template, variables) {
+exports.template = function templateDocument (template, variables) {
+  //todo: '@/path' syntax
+  //todo: '{"key": "value"}' syntax
   return templayed(template)(variables);
 };
 
