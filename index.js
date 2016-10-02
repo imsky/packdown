@@ -41,6 +41,7 @@ exports.read = function PackdownReader (input, options) {
       return document;
     }
 
+    //todo: move space decoding to parser
     if (file.content.length > 1) {
       // if two consecutive lines (ignoring empty lines) are space encoded, then the file is treated as space encoded
       for (var i = 0; i < file.content.length; i++) {
