@@ -78,4 +78,6 @@ describe('Reader', function () {
       packdown.read(text);
     }).should.throw();
   });
+
+  it('should fail on more than one file per file block');
 });

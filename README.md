@@ -1,25 +1,23 @@
 # Packdown
 
-Packdown stores files inside Markdown documents.
+Packdown stores files in Markdown documents.
 
 [![Build Status](https://travis-ci.org/imsky/packdown.svg?branch=master)](https://travis-ci.org/imsky/packdown)
 [![codecov.io](https://codecov.io/github/imsky/packdown/coverage.svg?branch=master)](https://codecov.io/github/imsky/packdown)
 
 ## Installation
 
-* [npm](https://www.npmjs.com/package/packdownjs): `npm install -g packdownjs`
+* [npm](https://www.npmjs.com/package/packdownjs): `npm install packdownjs`
 
-## Building
+## Packdown format
 
-Packdown uses npm scripts and [shelljs](https://github.com/shelljs/shelljs) for building.
+TBD
 
-```
-npm run build
-```
+## Packdown document objects
+
+TBD
 
 ## Testing
-
-Packdown uses [Mocha](https://github.com/mochajs/mocha) and [Istanbul](https://github.com/gotwarlost/istanbul) for testing and coverage.
 
 ```
 npm test
