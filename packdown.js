@@ -2,7 +2,7 @@
 
 Packdown - Markdown-based file container format
 Version 0.9.0
-(c) 2015-2016 Ivan Malopinsky - http://imsky.co
+(c) 2015-2017 Ivan Malopinsky - http://imsky.co
 
 License: MIT
 Issues:  https://github.com/imsky/packdown/issues
@@ -11,9 +11,6 @@ Issues:  https://github.com/imsky/packdown/issues
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Packdown = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var parser = require('./lib/parser');
-
-var templayed = require('./vendor/templayed');
-var normalizePath = require('./vendor/normalize-path');
 
 var FOUR_SPACES = '    ';
 
@@ -54,6 +51,7 @@ exports.read = function PackdownReader (input, options) {
       return document;
     }
 
+    //todo: move space decoding to parser
     if (file.content.length > 1) {
       // if two consecutive lines (ignoring empty lines) are space encoded, then the file is treated as space encoded
       for (var i = 0; i < file.content.length; i++) {
@@ -196,94 +194,9 @@ exports.write = function Writer (document) {
   }).join('\n');
 };
 
-/**
- * Convert a set of files to a document object.
- * @param {String} root Root directory
- * @param {Array} files An array of file objects with at least a path and a content property
- * @example
- * var root = '/foo';
- * var files = [{'content': 'bar', 'path': '/foo/bar'}];
- * var document = packdown.filesToDoc(root, files);
- * @return Document object
- */
-exports.filesToDoc = function filesToDoc (root, files) {
-  var document = {
-    'content': []
-  };
-
-  var basePath = normalizePath(root);
-
-  document.files = files.map(function (file) {
-    var ext = file.ext || '';
-    var content = file.content;
-    var path = file.path;
-
-    if (!content || !content.length) {
-      throw Error('Missing file content');
-    } else if (!path || !path.length) {
-      throw Error('Missing file path');
-    } else if (path.length > 256) {
-      throw Error('File path is too long');
-    }
-
-    var filePath = normalizePath(file.path).slice(basePath.length + 1);
-    var extRe = /\.[0-9a-z]+$/i;
-
-    if (!ext && filePath.indexOf('.') !== -1) {
-      var extMatch = filePath.match(extRe);
-
-      if (extMatch) {
-        ext = extMatch[0];
-      }
-    }
-
-    var pathWords = filePath.replace(/\W+/g, '');
-
-    if (!pathWords.length) {
-      throw Error('Invalid path: ' + filePath);
-    }
-
-    var tag = ext;
-
-    if (tag[0] === '.') {
-      tag = tag.slice(1);
-    }
-
-    //todo: dasherize filePath
-    return {
-      'name': filePath,
-      'tag': tag,
-      'content': content
-    };
-  }).reduce(function (files, file) {
-    files[file.name] = file;
-    return files;
-  }, {});
-
-  return document;
-};
-
-/**
- * Render a Mustache template.
- * @param {String} template - The template to render
- * @param {Object} variables - The values used within template
- * @example
- * var template = '{{foo}}';
- * var variables = {
- *  'foo': 'bar'
- * };
- * var output = packdown.template(template, variables);
- * @return String
- */
-exports.template = function templateDocument (template, variables) {
-  //todo: '@/path' syntax
-  //todo: '{"key": "value"}' syntax
-  return templayed(template)(variables);
-};
-
 exports.version = 'PACKDOWN_VERSION';
 
-},{"./lib/parser":2,"./vendor/normalize-path":3,"./vendor/templayed":4}],2:[function(require,module,exports){
+},{"./lib/parser":2}],2:[function(require,module,exports){
 var rFileHeading = /^\#{1,6} \/([a-z0-9\.\,\_\-\(\)\/]+)$/i;
 var rCodeHeading = /^```([a-z0-9][\-a-z0-9]*)$/i;
 var rCodeEnd = /^```$/;
@@ -359,65 +272,6 @@ module.exports = function PackdownLineParser (input) {
   }
 
   return document;
-};
-
-},{}],3:[function(require,module,exports){
-/*!
- * normalize-path <https://github.com/jonschlinkert/normalize-path>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License
- */
-
-module.exports = function normalizePath(str, stripTrailing) {
-  if (typeof str !== 'string') {
-    throw new TypeError('expected a string');
-  }
-  str = str.replace(/[\\\/]+/g, '/');
-  if (stripTrailing !== false) {
-    str = str.replace(/\/$/, '');
-  }
-  return str;
-};
-
-},{}],4:[function(require,module,exports){
-// *
-// * templayed.js (Uncompressed)
-// * The fastest and smallest Mustache compliant Javascript templating library written in 1806 bytes (uncompressed)
-// *
-// * (c) 2012-2016 Paul Engel (Internetbureau Holder B.V.)
-// * Except otherwise noted, templayed.js is licensed under
-// * http://creativecommons.org/licenses/by-sa/3.0
-// *
-
-module.exports = function(template, vars) {
-
-  var get = function(path, i) {
-    i = 1; path = path.replace(/\.\.\//g, function() { i++; return ''; });
-    var js = ['vars[vars.length - ', i, ']'], keys = (path == "." ? [] : path.split(".")), j = 0;
-    for (j; j < keys.length; j++) { js.push('.' + keys[j]); };
-    return js.join('');
-  }, tag = function(template) {
-    return template.replace(/\{\{(!|&|\{)?\s*(.*?)\s*}}+/g, function(match, operator, context) {
-      if (operator == "!") return '';
-      var i = inc++;
-      return ['"; var o', i, ' = ', get(context), ', s', i, ' = typeof(o', i, ') == "function" ? o', i, '.call(vars[vars.length - 1]) : o', i, '; s', i,' = ( s', i,' || s', i,' == 0 ? s', i,': "") + ""; s += ',
-        (operator ? ('s' + i) : '(/[&"><]/.test(s' + i + ') ? s' + i + '.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/>/g,"&gt;").replace(/</g,"&lt;") : s' + i + ')'), ' + "'
-      ].join('');
-    });
-  }, block = function(template) {
-    return tag(template.replace(/\{\{(\^|#)(.*?)}}(.*?)\{\{\/\2}}/g, function(match, operator, key, context) {
-      var i = inc++;
-      return ['"; var o', i, ' = ', get(key), '; ',
-        (operator == "^" ?
-          ['if ((o', i, ' instanceof Array) ? !o', i, '.length : !o', i, ') { s += "', block(context), '"; } '] :
-          ['if (typeof(o', i, ') == "boolean" && o', i, ') { s += "', block(context), '"; } else if (o', i, ') { for (var i', i, ' = 0; i', i, ' < o',
-            i, '.length; i', i, '++) { vars.push(o', i, '[i', i, ']); s += "', block(context), '"; vars.pop(); }}']
-        ).join(''), '; s += "'].join('');
-    }));
-  }, inc = 0;
-
-  return new Function("vars", 'vars = [vars], s = "' + block(template.replace(/"/g, '\\"').replace(/[\n|\r\n]/g, '\\n')) + '"; return s;');
 };
 
 },{}]},{},[1])(1)

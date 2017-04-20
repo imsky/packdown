@@ -8,5 +8,3 @@ Packdown stores files inside Markdown documents.
 ## Installation
 
 * [npm](https://www.npmjs.com/package/packdownjs): `npm install -g packdownjs`
-
-## Command line usage

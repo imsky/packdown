@@ -1,7 +1,5 @@
 var parser = require('./lib/parser');
 
-var templayed = require('./vendor/templayed');
-
 var FOUR_SPACES = '    ';
 
 /**
@@ -182,24 +180,6 @@ exports.write = function Writer (document) {
       return line;
     }
   }).join('\n');
-};
-
-/**
- * Render a Mustache template.
- * @param {String} template - The template to render
- * @param {Object} variables - The values used within template
- * @example
- * var template = '{{foo}}';
- * var variables = {
- *  'foo': 'bar'
- * };
- * var output = packdown.template(template, variables);
- * @return String
- */
-exports.template = function templateDocument (template, variables) {
-  //todo: '@/path' syntax
-  //todo: '{"key": "value"}' syntax
-  return templayed(template)(variables);
 };
 
 exports.version = 'PACKDOWN_VERSION';

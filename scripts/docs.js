@@ -12,20 +12,8 @@ exec("jsdoc2md --property-list-format table 'index.js'",
       console.error(stderr);
     } else {
       var apiDocs = stdout;
-      exec("node ./bin/packdown --help", {'silent': true},
-        function (code, stdout, stderr) {
-          if (code !== 0) {
-            console.error(stderr);
-          } else {
-            var cliDocs = stdout;
-
-            console.log(header);
-            console.log('```');
-            console.log(cliDocs);
-            console.log('```\r\n');
-            console.log(apiDocs);
-            console.log(footer);
-          }
-        });
+      console.log(header);
+      console.log(apiDocs);
+      console.log(footer);
     }
 });

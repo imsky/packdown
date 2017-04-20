@@ -9,34 +9,6 @@ Packdown stores files inside Markdown documents.
 
 * [npm](https://www.npmjs.com/package/packdownjs): `npm install -g packdownjs`
 
-## Command line usage
-
-```
-
-  Usage: packdown [options] [command]
-
-
-  Commands:
-
-    compress <input> [output]         
-    extract [options] <input> <output>
-
-  Options:
-
-    -h, --help     output usage information
-    -V, --version  output the version number
-
-  Examples:
-    compress <input> [output]
-      $ packdown compress foo bar  # compresses foo dir into bar file
-      $ packdown compress foo      # compresses foo dir, sends to stdout
-    extract [options] <input> <output>
-      $ packdown extract foo bar   # extracts foo file into bar directory
-      # templates foo file with vars.json, then extracts into bar directory
-      $ packdown extract -v vars.json foo bar
-
-```
-
 ## Functions
 
 <dl>
@@ -45,12 +17,6 @@ Packdown stores files inside Markdown documents.
 </dd>
 <dt><a href="#write">write(document)</a> ⇒</dt>
 <dd><p>Generate Packdown document from document object.</p>
-</dd>
-<dt><a href="#filesToDoc">filesToDoc(root, files)</a> ⇒</dt>
-<dd><p>Convert a set of files to a document object.</p>
-</dd>
-<dt><a href="#template">template(template, variables)</a> ⇒</dt>
-<dd><p>Render a Mustache template.</p>
 </dd>
 </dl>
 
@@ -98,46 +64,6 @@ var document = {
   }]
 };
 var output = packdown.write(document);
-```
-<a name="filesToDoc"></a>
-
-## filesToDoc(root, files) ⇒
-Convert a set of files to a document object.
-
-**Kind**: global function  
-**Returns**: Document object  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| root | <code>String</code> | Root directory |
-| files | <code>Array</code> | An array of file objects with at least a path and a content property |
-
-**Example**  
-```js
-var root = '/foo';
-var files = [{'content': 'bar', 'path': '/foo/bar'}];
-var document = packdown.filesToDoc(root, files);
-```
-<a name="template"></a>
-
-## template(template, variables) ⇒
-Render a Mustache template.
-
-**Kind**: global function  
-**Returns**: String  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| template | <code>String</code> | The template to render |
-| variables | <code>Object</code> | The values used within template |
-
-**Example**  
-```js
-var template = '{{foo}}';
-var variables = {
- 'foo': 'bar'
-};
-var output = packdown.template(template, variables);
 ```
 
 ## Building
