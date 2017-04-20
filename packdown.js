@@ -10,8 +10,6 @@ Issues:  https://github.com/imsky/packdown/issues
 */
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Packdown = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var parser = require('./lib/parser');
-
 var FOUR_SPACES = '    ';
 
 /**
@@ -22,6 +20,84 @@ var FOUR_SPACES = '    ';
 function isSpaceEncoded (line) {
   return line.slice(0, 4) === FOUR_SPACES;
 }
+
+/**
+ * Parse text into Packdown document
+ * @param {String} input
+ * @return Document object
+ */
+function parser (input) {
+  var rFileHeading = /^\#{1,6} \/([a-z0-9\.\,\_\-\(\)\/]+)$/i;
+  var rCodeHeading = /^```([a-z0-9][\-a-z0-9]*)$/i;
+  var rCodeEnd = /^```$/;
+
+  var document = {
+    'files': {},
+    'content': []
+  };
+
+  var text = String(input);
+  var lines = text.split('\n');
+  var line = lines[0];
+
+  var stack = [];
+  var file = null;
+
+  for (var i = 0, l = lines.length; i < l; i++) {
+    line = lines[i];
+    file = null;
+
+    var fileHeading = line.match(rFileHeading);
+    var codeHeading = line.match(rCodeHeading);
+    var codeEnd = line.match(rCodeEnd);
+    var codeTag = codeHeading && codeHeading[1];
+
+    if (fileHeading) {
+      if (!stack.length) {
+        file = {
+          'name': fileHeading[1],
+          'info': [],
+          'content': [],
+          'pending': true
+        };
+        document.files[file.name] = file;
+        stack.push(file.name);
+      } else {
+        throw Error('File not finished parsing');
+      }
+    } else if (stack.length && (codeHeading || codeEnd)) {
+      file = document.files[stack[0]];
+
+      if (stack.length === 1) {
+        file.tag = codeTag;
+        stack.push(codeTag || 'txt');
+      } else if (stack.length === 2 && !codeTag && file.pending) {
+        delete file.pending;
+        document.content.push({
+          'file': file.name
+        });
+        stack = [];
+      } else {
+        throw Error('Invalid code block');
+      }
+    } else {
+      if (stack.length === 1) {
+        document.files[stack[0]].info.push(line);
+      } else if (stack.length === 2) {
+        document.files[stack[0]].content.push(line);
+      } else {
+        document.content.push(line);
+      }
+    }
+  }
+
+  if (stack.length) {
+    throw Error('Invalid document');
+  }
+
+  return document;
+}
+
 
 /**
  * Generate document object from text input.
@@ -195,84 +271,6 @@ exports.write = function Writer (document) {
 };
 
 exports.version = 'PACKDOWN_VERSION';
-
-},{"./lib/parser":2}],2:[function(require,module,exports){
-var rFileHeading = /^\#{1,6} \/([a-z0-9\.\,\_\-\(\)\/]+)$/i;
-var rCodeHeading = /^```([a-z0-9][\-a-z0-9]*)$/i;
-var rCodeEnd = /^```$/;
-
-/**
- * Parse text into Packdown document
- * @param {String} input
- * @return Document object
- */
-module.exports = function PackdownLineParser (input) {
-  var document = {
-    'files': {},
-    'content': []
-  };
-
-  var text = String(input);
-  var lines = text.split('\n');
-  var line = lines[0];
-
-  var stack = [];
-  var file = null;
-
-  for (var i = 0, l = lines.length; i < l; i++) {
-    line = lines[i];
-    file = null;
-
-    var fileHeading = line.match(rFileHeading);
-    var codeHeading = line.match(rCodeHeading);
-    var codeEnd = line.match(rCodeEnd);
-    var codeTag = codeHeading && codeHeading[1];
-
-    if (fileHeading) {
-      if (!stack.length) {
-        file = {
-          'name': fileHeading[1],
-          'info': [],
-          'content': [],
-          'pending': true
-        };
-        document.files[file.name] = file;
-        stack.push(file.name);
-      } else {
-        throw Error('File not finished parsing');
-      }
-    } else if (stack.length && (codeHeading || codeEnd)) {
-      file = document.files[stack[0]];
-
-      if (stack.length === 1) {
-        file.tag = codeTag;
-        stack.push(codeTag || 'txt');
-      } else if (stack.length === 2 && !codeTag && file.pending) {
-        delete file.pending;
-        document.content.push({
-          'file': file.name
-        });
-        stack = [];
-      } else {
-        throw Error('Invalid code block');
-      }
-    } else {
-      if (stack.length === 1) {
-        document.files[stack[0]].info.push(line);
-      } else if (stack.length === 2) {
-        document.files[stack[0]].content.push(line);
-      } else {
-        document.content.push(line);
-      }
-    }
-  }
-
-  if (stack.length) {
-    throw Error('Invalid document');
-  }
-
-  return document;
-};
 
 },{}]},{},[1])(1)
 });
