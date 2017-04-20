@@ -11,7 +11,7 @@ var banner = [
 '',
 'Packdown - Markdown-based file container format',
 'Version PACKDOWN_VERSION',
-'(c) 2015-2016 Ivan Malopinsky - http://imsky.co',
+'(c) 2015-2017 Ivan Malopinsky - http://imsky.co',
 '',
 'License: MIT',
 'Issues:  https://github.com/imsky/packdown/issues',

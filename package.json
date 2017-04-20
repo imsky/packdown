@@ -9,9 +9,6 @@
     "type": "git",
     "url": "git+https://github.com/imsky/packdown.git"
   },
-  "bin": {
-    "packdown": "./bin/packdown"
-  },
   "scripts": {
     "test": "BLUEBIRD_DEBUG=1 istanbul cover -x 'vendor/*' _mocha -- --bail './test/**/*-test.js'",
     "codecov": "codecov",
