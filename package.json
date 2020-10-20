@@ -5,10 +5,6 @@
   "license": "MIT",
   "description": "",
   "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/imsky/packdown.git"
-  },
   "scripts": {
     "test": "istanbul cover -x 'vendor/*' _mocha -- --bail './test/**/*-test.js'",
     "codecov": "codecov",
@@ -39,13 +35,11 @@
   "devDependencies": {
     "browserify": "^11.1.0",
     "chai": "^3.5.0",
-    "chai-as-promised": "^5.2.0",
     "codecov": "^1.0.1",
     "eslint": "^1.10.3",
     "istanbul": "^0.4.2",
     "jsfmt": "^0.5.3",
     "mocha": "^2.4.5",
-    "mock-fs": "^3.8.0",
     "shelljs": "^0.5.3",
     "uglify-js": "^2.4.24"
   }
