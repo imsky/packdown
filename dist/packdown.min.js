@@ -2,7 +2,7 @@
 
 Packdown - Markdown-based file container format
 Version 0.9.0
-(c) 2015-2017 Ivan Malopinsky - http://imsky.co
+(c) 2015-2020 Ivan Malopinsky - http://imsky.co
 
 License: MIT
 Issues:  https://github.com/imsky/packdown/issues

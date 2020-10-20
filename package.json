@@ -12,8 +12,8 @@
   "scripts": {
     "test": "istanbul cover -x 'vendor/*' _mocha -- --bail './test/**/*-test.js'",
     "codecov": "codecov",
-    "browserify": "browserify -s Packdown index.js -o packdown.js",
-    "uglify": "uglifyjs packdown.js -o packdown.min.js",
+    "browserify": "browserify -s Packdown index.js -o dist/packdown.js",
+    "uglify": "uglifyjs dist/packdown.js -o dist/packdown.min.js",
     "format": "jsfmt --write -v lib",
     "lint": "eslint index.js lib/*.js lib/commands/*.js bin/*.js",
     "quality": "npm run format && npm run lint && npm run test",

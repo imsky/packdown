@@ -1,7 +1,5 @@
 require('shelljs/global');
 
-var fs = require('fs');
-
 var package = require('../package');
 
 var version = package.version;
@@ -22,10 +20,10 @@ var banner = [
 ''
 ];
 
-var bannerText = banner.join('\n').to('banner.txt');
+banner.join('\n').to('banner.txt');
 
-cat('banner.txt', 'packdown.js').to('packdown.js');
-sed('-i', 'PACKDOWN_VERSION', version, 'packdown.js');
-cat('banner.txt', 'packdown.min.js').to('packdown.min.js');
-sed('-i', 'PACKDOWN_VERSION', version, 'packdown.min.js');
+cat('banner.txt', 'dist/packdown.js').to('dist/packdown.js');
+sed('-i', 'PACKDOWN_VERSION', version, 'dist/packdown.js');
+cat('banner.txt', 'dist/packdown.min.js').to('dist/packdown.min.js');
+sed('-i', 'PACKDOWN_VERSION', version, 'dist/packdown.min.js');
 rm('banner.txt');
