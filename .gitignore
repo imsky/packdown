@@ -1,7 +1,7 @@
 # Gitignore from Quickstart
 # qkst.io/dotfiles/gitignore
 
-coverage
+coverage/
 banner.txt
 
 # JavaScript

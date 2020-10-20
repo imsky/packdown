@@ -10,7 +10,7 @@
     "url": "git+https://github.com/imsky/packdown.git"
   },
   "scripts": {
-    "test": "BLUEBIRD_DEBUG=1 istanbul cover -x 'vendor/*' _mocha -- --bail './test/**/*-test.js'",
+    "test": "istanbul cover -x 'vendor/*' _mocha -- --bail './test/**/*-test.js'",
     "codecov": "codecov",
     "browserify": "browserify -s Packdown index.js -o packdown.js",
     "uglify": "uglifyjs packdown.js -o packdown.min.js",
@@ -35,14 +35,7 @@
     "url": "https://github.com/imsky/packdown/issues"
   },
   "homepage": "https://github.com/imsky/packdown",
-  "dependencies": {
-    "bluebird": "^2.10.0",
-    "commander": "^2.9.0",
-    "isbinaryfile": "^3.0.0",
-    "pluralize": "^1.2.1",
-    "recursive-readdir": "^1.3.0",
-    "shelljs": "^0.5.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "browserify": "^11.1.0",
     "chai": "^3.5.0",
@@ -53,6 +46,7 @@
     "jsfmt": "^0.5.3",
     "mocha": "^2.4.5",
     "mock-fs": "^3.8.0",
+    "shelljs": "^0.5.3",
     "uglify-js": "^2.4.24"
   }
 }
