@@ -15,8 +15,8 @@ function isSpaceEncoded (line) {
  * @return Document object
  */
 function parser (input) {
-  var rFileHeading = /^\#{1,6} \/([a-z0-9\.\,\_\-\(\)\/]+)$/i;
-  var rCodeHeading = /^```([a-z0-9][\-a-z0-9]*)$/i;
+  var rFileHeading = /^#{1,6} \/([a-z0-9.,_()/-]+)$/i;
+  var rCodeHeading = /^```([a-z0-9][a-z0-9-]*)$/i;
   var rCodeEnd = /^```$/;
 
   var document = {

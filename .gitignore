@@ -3,6 +3,7 @@
 
 coverage/
 banner.txt
+package-lock.json
 
 # JavaScript
 node_modules/
