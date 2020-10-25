@@ -6,15 +6,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover -x 'vendor/*' _mocha -- --bail './test/**/*-test.js'",
-    "codecov": "codecov",
+    "test": "nyc mocha './test/**/*-test.js'",
     "browserify": "browserify -s Packdown index.js -o dist/packdown.js",
     "uglify": "uglifyjs dist/packdown.js -o dist/packdown.min.js",
     "format": "jsfmt --write -v lib",
     "lint": "eslint index.js",
     "quality": "npm run format && npm run lint && npm run test",
     "build": "npm run quality && npm run browserify",
-    "postbuild": "npm run uglify && node scripts/version "
+    "postbuild": "npm run uglify && node scripts/version"
   },
   "keywords": [
     "markdown",
@@ -34,12 +33,11 @@
   "dependencies": {},
   "devDependencies": {
     "browserify": "^11.1.0",
-    "chai": "^3.5.0",
-    "codecov": "^1.0.1",
+    "chai": "4.2.0",
     "eslint": "7.11.0",
-    "istanbul": "^0.4.2",
     "jsfmt": "^0.5.3",
     "mocha": "8.2.0",
+    "nyc": "15.1.0",
     "shelljs": "^0.5.3",
     "uglify-js": "^2.4.24"
   }

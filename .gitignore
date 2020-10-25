@@ -1,9 +1,10 @@
 # Gitignore from Quickstart
 # qkst.io/dotfiles/gitignore
 
-coverage/
+coverage
 banner.txt
 package-lock.json
+.nyc_output
 
 # JavaScript
 node_modules/
