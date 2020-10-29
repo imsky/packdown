@@ -1,276 +1,222 @@
-/*!
-
-Packdown - Markdown-based file container format
-Version 0.9.0
-(c) 2015-2020 Ivan Malopinsky - http://imsky.co
-
-License: MIT
-Issues:  https://github.com/imsky/packdown/issues
-
-*/
-
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Packdown = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var FOUR_SPACES = '    ';
-
-/**
- * @private
- * @param {String} line
- * @return Boolean
+/** 
+ * Packdown - files in Markdown
+ * Version 0.9.9
+ * © 2020 Ivan Malopinsky
  */
-function isSpaceEncoded (line) {
-  return line.slice(0, 4) === FOUR_SPACES;
-}
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = global || self, global.Packdown = factory());
+}(this, (function () { 'use strict';
 
-/**
- * Parse text into Packdown document
- * @param {String} input
- * @return Document object
- */
-function parser (input) {
-  var rFileHeading = /^\#{1,6} \/([a-z0-9\.\,\_\-\(\)\/]+)$/i;
-  var rCodeHeading = /^```([a-z0-9][\-a-z0-9]*)$/i;
-  var rCodeEnd = /^```$/;
+  var RE_FILE_HEADING = /^(#{1,6}) \/([a-z0-9.,_()/-]+)$/i;
+  var RE_CODE_FENCE = /^```([a-z0-9][a-z0-9-]*)?$/i;
+  var PACKDOWN_FILE_PREFIX = 'packdown:/';
 
-  var document = {
-    'files': {},
-    'content': []
-  };
+  /**
+   * @typedef {Object} PackdownFile
+   * @property {string} name
+   * @property {number} headingLevel heading level of the file block
+   * @property {string[]} details details about the file
+   * @property {string} infoString typically specifies the language of the file's content; may be used for hints and file metadata
+   * @property {string[]} content file content
+   */
 
-  var text = String(input);
-  var lines = text.split('\n');
-  var line = lines[0];
-
-  var stack = [];
-  var file = null;
-
-  for (var i = 0, l = lines.length; i < l; i++) {
-    line = lines[i];
-    file = null;
-
-    var fileHeading = line.match(rFileHeading);
-    var codeHeading = line.match(rCodeHeading);
-    var codeEnd = line.match(rCodeEnd);
-    var codeTag = codeHeading && codeHeading[1];
-
-    if (fileHeading) {
-      if (!stack.length) {
-        file = {
-          'name': fileHeading[1],
-          'info': [],
-          'content': [],
-          'pending': true
-        };
-        document.files[file.name] = file;
-        stack.push(file.name);
-      } else {
-        throw Error('File not finished parsing');
-      }
-    } else if (stack.length && (codeHeading || codeEnd)) {
-      file = document.files[stack[0]];
-
-      if (stack.length === 1) {
-        file.tag = codeTag;
-        stack.push(codeTag || 'txt');
-      } else if (stack.length === 2 && !codeTag && file.pending) {
-        delete file.pending;
-        document.content.push({
-          'file': file.name
-        });
-        stack = [];
-      } else {
-        throw Error('Invalid code block');
-      }
-    } else {
-      if (stack.length === 1) {
-        document.files[stack[0]].info.push(line);
-      } else if (stack.length === 2) {
-        document.files[stack[0]].content.push(line);
-      } else {
-        document.content.push(line);
-      }
-    }
+  /**
+   * @param {string} name File name
+   * @param {number} headingLevel Heading level of the file block
+   * @returns {PackdownFile} Packdown file
+   */
+  function PackdownFile(name, headingLevel) {
+    return {
+      name: name,
+      headingLevel: headingLevel,
+      details: [],
+      infoString: undefined,
+      content: []
+    };
   }
 
-  if (stack.length) {
-    throw Error('Invalid document');
+  /**
+   * @typedef {Object} PackdownDocument
+   * @property {Object.<string,PackdownFile>} files
+   * @property {string[]} content
+   */
+
+  /**
+   * @returns {PackdownDocument} Packdown document
+   */
+  function PackdownDocument() {
+    return {
+      files: {},
+      content: []
+    };
   }
 
-  return document;
-}
-
-
-/**
- * Generate document object from text input.
- * @param {String} input
- * @param {Object} options - {disableSpaceEncoding}
- * @example
- * var input = ['# /foo', '\`\`\`', 'content', '\`\`\`'].join('\n');
- * var output = packdown.read(input);
- * @return Document object
- */
-exports.read = function PackdownReader (input, options) {
-  options = options || {};
-
-  if (input.slice(-1) !== '\n') {
-    input += '\n';
+  /**
+   * Does line start with 4 spaces?
+   * @param {string} line Line of text
+   * @return {Boolean} True if line starts with 4 spaces
+   */
+  function isLineIndented(line) {
+    return line.slice(0, 4) === '    ';
   }
 
-  var document = parser(input);
+  /**
+   * Strip indentation (leading 4 spaces) from input if it seems to be indented.
+   * @param {string[]} input Array of lines of text
+   * @returns {string[]} Array of lines of text without indentation if it exists
+   */
+  function removeSourceIndentation(input) {
+    var isInputIndented = false;
+    var isLastLineIndented = false;
+    var indentedLineCount = 0;
 
-  Object.keys(document.files).forEach(function (fileName) {
-    var file = document.files[fileName];
-    var spaceEncoding = false;
-    var spaceEncodedLines = 0;
-    var lastLineSpaceEncoded = false;
-
-    if (options.disableSpaceEncoding) {
-      return document;
-    }
-
-    //todo: move space decoding to parser
-    if (file.content.length > 1) {
-      // if two consecutive lines (ignoring empty lines) are space encoded, then the file is treated as space encoded
-      for (var i = 0; i < file.content.length; i++) {
-        if (!file.content[i].length) {
+    if (input.length > 1) {
+      for (var i = 0; i < input.length; i++) {
+        var line = input[i];
+        if (!line.length) {
           continue;
         }
 
-        lastLineSpaceEncoded = isSpaceEncoded(file.content[i]);
+        isLastLineIndented = isLineIndented(line);
 
-        if (lastLineSpaceEncoded) {
-          spaceEncodedLines++;
-          if (spaceEncodedLines > 1) {
-            spaceEncoding = true;
+        if (isLastLineIndented) {
+          indentedLineCount++;
+          if (indentedLineCount > 1) {
+            isInputIndented = true;
             break;
           }
-        } else {
-          if (i === 0 || lastLineSpaceEncoded) {
-            spaceEncoding = false;
-            break;
-          }
+        } else if (i === 0) {
+          isInputIndented = false;
+          break;
         }
       }
-    } else if (file.content.length === 1 && isSpaceEncoded(file.content[0])) {
-      spaceEncoding = true;
+    } else if (input.length === 1 && isLineIndented(input[0])) {
+      isInputIndented = true;
     }
 
-    if (spaceEncoding) {
-      file.content = file.content.map(function (line) {
-        return line.replace(/^ {4}/, '');
-      });
+    if (isInputIndented) {
+      return input.map(function (line) { return line.replace(/^ {4}/, ''); });
     }
-  });
 
-  return document;
-};
-
-/**
- * Generate a Packdown file text block given a Packdown file object.
- * @private
- * @param {File} file
- * @return String
- */
-function FileBlock (file) {
-  var ret = [];
-
-  var name = file.name;
-  var info = file.info || '';
-  var tag = file.tag || '';
-  var content = file.content || '';
-  var encoding = file.encoding || 'space';
-
-  if (!name) {
-    throw Error('File name is missing');
+    return input;
   }
 
-  if (name.match(/\s/)) {
-    throw Error('File name contains spaces');
+  /**
+   * Convert text input to Packdown document.
+   * @param {string} input Packdown document as text
+   * @returns {PackdownDocument} Packdown document
+   */
+  function read(input) {
+    var text = String(input);
+
+    if (text.slice(-1) !== '\n') {
+      text += '\n';
+    }
+
+    var lines = text.split('\n');
+
+    var pendingFiles = {};
+    var document = PackdownDocument();
+
+    var file = null;
+    var source = null;
+
+    for (var i = 0, list = lines; i < list.length; i += 1) {
+      var line = list[i];
+
+      var matchFileHeading = line.match(RE_FILE_HEADING);
+      var matchCodeFence = line.match(RE_CODE_FENCE);
+
+      if (matchFileHeading) {
+        if (!file) {
+          file = PackdownFile(matchFileHeading[2], matchFileHeading[1].length);
+          document.files[file.name] = file;
+          pendingFiles[file.name] = true;
+        } else {
+          throw Error('Unexpected file');
+        }
+      } else if (file && matchCodeFence) {
+        var codeTag = matchCodeFence && matchCodeFence[1];
+
+        if (!source) {
+          file.infoString = codeTag;
+          source = true;
+        } else if (!codeTag && pendingFiles[file.name]) {
+          delete pendingFiles[file.name];
+          file.content = removeSourceIndentation(file.content);
+          document.content.push(("" + PACKDOWN_FILE_PREFIX + (file.name)));
+          file = null;
+          source = null;
+        } else {
+          throw Error('Invalid code block');
+        }
+      } else {
+        if (file && !source) {
+          file.details.push(line);
+        } else if (file && source) {
+          file.content.push(line);
+        } else {
+          document.content.push(line);
+        }
+      }
+    }
+
+    if (file || source) {
+      throw Error('Truncated input');
+    }
+
+    return document;
   }
 
-  var FileHeader = '### /' + name;
+  /**
+   * Convert Packdown document to text.
+   * @param {PackdownDocument} document Packdown document
+   * @returns {string} Packdown document as text
+   */
+  function write(document) {
+    var content = document.content;
+    var files = document.files;
 
-  ret.push(FileHeader);
+    if (!content || !files) {
+      throw Error('Document content or files missing');
+    } else if (!Array.isArray(content)) {
+      throw Error('Document content not an array');
+    } else if (Object(files) !== files) {
+      throw Error('Document files not an object');
+    }
 
-  if (info) {
-    ret.push(info);
-  }
-
-  var CodeBlockStart = '```' + tag;
-
-  var encodedContent = content;
-
-  if (typeof encodedContent === 'string') {
-    encodedContent = content.split('\n');
-  } else if (!Array.isArray(encodedContent)) {
-    throw Error('File content is neither an array nor a string');
-  }
-
-  switch (encoding) {
-    case 'space':
-      encodedContent = encodedContent.map(function (line) {
-        return FOUR_SPACES + line;
+    return content
+      .map(function (line) {
+        if (line.indexOf(PACKDOWN_FILE_PREFIX) === 0) {
+          var file = files[line.slice(PACKDOWN_FILE_PREFIX.length)];
+          var name = file.name;
+          var headingLevel = file.headingLevel;
+          var details = file.details;
+          var infoString = file.infoString; if ( infoString === void 0 ) infoString = '';
+          var content = file.content;
+          var heading =
+            Array(Math.max(2, headingLevel + 1)).join('#') + ' /' + name;
+          return [
+            heading,
+            details.join('\n'),
+            '```' + infoString,
+            content.join('\n'),
+            '```'
+          ].join('\n');
+        }
+        return line;
       })
-        .join('\n');
-      break;
+      .join('\n');
   }
 
-  ret.push(CodeBlockStart, encodedContent, '```');
+  var index = {
+    read: read,
+    write: write,
+    version: '0.9.9'
+  };
 
-  return ret.join('\n') + '\n';
-}
+  return index;
 
-/**
- * Generate Packdown document from document object.
- * @param {Object} document object
- * @example
- * var document = {
- *   'files': {
- *     'foo': {
- *       'name': 'foo',
- *       'content': 'bar'
- *     }
- *   },
- *   'content': [{
- *     'file': 'foo'
- *   }]
- * };
- * var output = packdown.write(document);
- * @return String
- */
-exports.write = function Writer (document) {
-  var content = document.content;
-  var files = document.files;
-
-  if (!content && !files) {
-    throw Error('Document is missing content and files');
-  }
-
-  if ((!content || !content.length) && files && Object(files) === files && Object.keys(files).length) {
-    content = Object.keys(files).map(function (file) {
-      return {
-        'file': file
-      };
-    });
-  }
-
-  if (!Array.isArray(content)) {
-    throw Error('Invalid content provided');
-  }
-
-  if (Array.isArray(files)) {
-    throw Error('Files should be a map');
-  }
-
-  return content.map(function (line) {
-    if (line.file) {
-      return FileBlock(files[line.file]);
-    } else {
-      return line;
-    }
-  }).join('\n');
-};
-
-exports.version = 'PACKDOWN_VERSION';
-
-},{}]},{},[1])(1)
-});
+})));

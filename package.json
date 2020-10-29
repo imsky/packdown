@@ -1,19 +1,18 @@
 {
   "name": "packdownjs",
-  "version": "0.9.0",
+  "version": "0.9.9",
   "author": "Ivan Malopinsky",
   "license": "MIT",
-  "description": "",
-  "main": "index.js",
+  "description": "Files in Markdown",
+  "main": "dist/packdown.js",
   "scripts": {
-    "test": "nyc mocha './test/**/*-test.js'",
-    "browserify": "browserify -s Packdown index.js -o dist/packdown.js",
-    "uglify": "uglifyjs dist/packdown.js -o dist/packdown.min.js",
-    "format": "jsfmt --write -v lib",
-    "lint": "eslint index.js",
-    "quality": "npm run format && npm run lint && npm run test",
-    "build": "npm run quality && npm run browserify",
-    "postbuild": "npm run uglify && node scripts/version"
+    "build": "rollup --config",
+    "format": "prettier --single-quote --write src/**/*",
+    "lint": "eslint src/**/*",
+    "posttest": "npm run lint",
+    "prebuild": "rm -rf dist/*",
+    "prepublish": "npm run format && npm run build",
+    "test": "nyc mocha './test/*-test.js'"
   },
   "keywords": [
     "markdown",
@@ -30,15 +29,31 @@
     "url": "https://github.com/imsky/packdown/issues"
   },
   "homepage": "https://github.com/imsky/packdown",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imsky/packdown.git"
+  },
   "dependencies": {},
   "devDependencies": {
-    "browserify": "^11.1.0",
     "chai": "4.2.0",
     "eslint": "7.11.0",
-    "jsfmt": "^0.5.3",
     "mocha": "8.2.0",
     "nyc": "15.1.0",
-    "shelljs": "^0.5.3",
-    "uglify-js": "^2.4.24"
+    "reify": "0.20.12",
+    "prettier": "1.17.1",
+    "rollup": "1.32.1",
+    "rollup-plugin-banner": "0.2.0",
+    "@rollup/plugin-buble": "0.21.3",
+    "@rollup/plugin-replace": "2.3.4",
+    "rollup-plugin-uglify": "6.0.4"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "branches": 100
+  },
+  "build": {
+    "name": "packdown",
+    "friendlyName": "Packdown",
+    "summary": "files in Markdown"
   }
 }

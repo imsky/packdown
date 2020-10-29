@@ -1,0 +1,5 @@
+{
+  "require": ["reify"],
+  "full-trace": true,
+  "bail": true
+}
