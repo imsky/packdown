@@ -5,10 +5,10 @@ const PACKDOWN_FILE_PREFIX = 'packdown:/';
 /**
  * @typedef {Object} PackdownFile
  * @property {string} name
- * @property {number} headingLevel - heading level of the file block
- * @property {string[]} details - details about the file
- * @property {string} infoString - typically specifies the language of the file's content; may be used for hints and file metadata
- * @property {string[]} content - file content
+ * @property {number} headingLevel heading level of the file block
+ * @property {string[]} details details about the file
+ * @property {string} infoString typically specifies the language of the file's content; may be used for hints and file metadata
+ * @property {string[]} content file content
  */
 
 /**
@@ -23,8 +23,8 @@ function PackdownFile(name, headingLevel) {
     details: [],
     infoString: undefined,
     content: []
-  }
-};
+  };
+}
 
 /**
  * @typedef {Object} PackdownDocument
@@ -33,7 +33,7 @@ function PackdownFile(name, headingLevel) {
  */
 
 /**
- * @returns {PackdownDocument}
+ * @returns {PackdownDocument} Packdown document
  */
 function PackdownDocument() {
   return {
@@ -44,17 +44,17 @@ function PackdownDocument() {
 
 /**
  * Does line start with 4 spaces?
- * @param {string} line
- * @return Boolean
+ * @param {string} line Line of text
+ * @return {Boolean} True if line starts with 4 spaces
  */
-function isLineIndented (line) {
+function isLineIndented(line) {
   return line.slice(0, 4) === '    ';
 }
 
 /**
- * Strip indent (leading 4 spaces) from input if it seems to be indented.
- * @param {string[]} input
- * @returns {string[]}
+ * Strip indentation (leading 4 spaces) from input if it seems to be indented.
+ * @param {string[]} input Array of lines of text
+ * @returns {string[]} Array of lines of text without indentation if it exists
  */
 function removeSourceIndentation(input) {
   let isInputIndented = false;
@@ -94,8 +94,8 @@ function removeSourceIndentation(input) {
 
 /**
  * Convert text input to Packdown document.
- * @param {string} input
- * @returns {PackdownDocument}
+ * @param {string} input Packdown document as text
+ * @returns {PackdownDocument} Packdown document
  */
 function read(input) {
   let text = String(input);
@@ -159,8 +159,8 @@ function read(input) {
 
 /**
  * Convert Packdown document to text.
- * @param {PackdownDocument} document
- * @returns {string}
+ * @param {PackdownDocument} document Packdown document
+ * @returns {string} Packdown document as text
  */
 function write(document) {
   const { content, files } = document;
@@ -173,19 +173,28 @@ function write(document) {
     throw Error('Document files not an object');
   }
 
-  return content.map(line => {
-    if (line.indexOf(PACKDOWN_FILE_PREFIX) === 0) {
-      const file = files[line.slice(PACKDOWN_FILE_PREFIX.length)];
-      const { name, headingLevel, details, infoString='', content } = file;
-      const heading = Array(Math.max(2, headingLevel + 1)).join('#') + ' /' + name;
-      return [heading, details.join('\n'), '```' + infoString, content.join('\n'), '```'].join('\n');
-    }
-    return line;
-  }).join('\n');
+  return content
+    .map(line => {
+      if (line.indexOf(PACKDOWN_FILE_PREFIX) === 0) {
+        const file = files[line.slice(PACKDOWN_FILE_PREFIX.length)];
+        const { name, headingLevel, details, infoString = '', content } = file;
+        const heading =
+          Array(Math.max(2, headingLevel + 1)).join('#') + ' /' + name;
+        return [
+          heading,
+          details.join('\n'),
+          '```' + infoString,
+          content.join('\n'),
+          '```'
+        ].join('\n');
+      }
+      return line;
+    })
+    .join('\n');
 }
 
 export default {
   read,
   write,
   version: 'VERSION'
-}
+};
