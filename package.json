@@ -4,7 +4,7 @@
   "author": "Ivan Malopinsky",
   "license": "MIT",
   "description": "Files in Markdown",
-  "main": "index.js",
+  "main": "dist/packdown.js",
   "scripts": {
     "build": "rollup --config",
     "format": "prettier --single-quote --write src/**/*",
