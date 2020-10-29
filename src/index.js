@@ -176,9 +176,9 @@ function write(document) {
   return content.map(line => {
     if (line.indexOf(PACKDOWN_FILE_PREFIX) === 0) {
       const file = files[line.slice(PACKDOWN_FILE_PREFIX.length)];
-      const { name, headingLevel, details, infoString, content } = file;
-      const heading = Array(headingLevel + 1).join('#') + ' /' + name;
-      return [heading, details.join('\n'), '```' + (infoString || ''), content.join('\n'), '```'].join('\n');
+      const { name, headingLevel, details, infoString='', content } = file;
+      const heading = Array(Math.max(2, headingLevel + 1)).join('#') + ' /' + name;
+      return [heading, details.join('\n'), '```' + infoString, content.join('\n'), '```'].join('\n');
     }
     return line;
   }).join('\n');
