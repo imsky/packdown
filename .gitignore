@@ -5,6 +5,7 @@ coverage
 banner.txt
 package-lock.json
 .nyc_output
+.reify-cache
 
 # JavaScript
 node_modules/

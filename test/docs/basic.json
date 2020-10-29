@@ -1,9 +1,0 @@
-{
-  "files": {
-    "hello-world": {
-      "name": "hello-world",
-      "info": "basic file",
-      "content": "{{foo}}\nbar"
-    }
-  }
-}

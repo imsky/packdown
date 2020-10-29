@@ -6,7 +6,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nyc mocha './test/**/*-test.js'",
+    "test": "nyc mocha './test/*-test.js'",
     "browserify": "browserify -s Packdown index.js -o dist/packdown.js",
     "uglify": "uglifyjs dist/packdown.js -o dist/packdown.min.js",
     "format": "jsfmt --write -v lib",
@@ -38,7 +38,12 @@
     "jsfmt": "^0.5.3",
     "mocha": "8.2.0",
     "nyc": "15.1.0",
+    "reify": "0.20.12",
     "shelljs": "^0.5.3",
     "uglify-js": "^2.4.24"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "branches": 100
   }
 }

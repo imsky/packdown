@@ -6,7 +6,3 @@ exports.documents = {
   'edgeCase': fs.readFileSync(path.join(__dirname, 'docs', 'edge-case.md'), 'utf8'),
   'example': fs.readFileSync(path.join(__dirname, 'docs', 'example.md'), 'utf8')
 };
-
-exports.variables = {
-  'template': fs.readFileSync(path.join(__dirname, 'docs', 'template.json'), 'utf8')
-};

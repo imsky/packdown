@@ -1,6 +1,7 @@
 ### /hello-world.js
 ```js
-    console.log('hello world');
+    console.log('hello');
+    console.log('world');
 ```
 
 ### /hello-world.txt
