@@ -1,6 +1,46 @@
-const RE_FILE_HEADING = /^#{1,6} \/([a-z0-9.,_()/-]+)$/i;
-const RE_CODE_HEADING = /^```([a-z0-9][a-z0-9-]*)$/i;
-const RE_CODE_END = /^```$/;
+const RE_FILE_HEADING = /^(#{1,6}) \/([a-z0-9.,_()/-]+)$/i;
+const RE_CODE_FENCE = /^```([a-z0-9][a-z0-9-]*)?$/i;
+const PACKDOWN_FILE_PREFIX = 'packdown:/';
+
+/**
+ * @typedef {Object} PackdownFile
+ * @property {string} name
+ * @property {number} headingLevel - heading level of the file block
+ * @property {string[]} details - details about the file
+ * @property {string} infoString - typically specifies the language of the file's content; may be used for hints and file metadata
+ * @property {string[]} content - file content
+ */
+
+/**
+ * @param {string} name File name
+ * @param {number} headingLevel Heading level of the file block
+ * @returns {PackdownFile} Packdown file
+ */
+function PackdownFile(name, headingLevel) {
+  return {
+    name,
+    headingLevel,
+    details: [],
+    infoString: undefined,
+    content: []
+  }
+};
+
+/**
+ * @typedef {Object} PackdownDocument
+ * @property {Object.<string,PackdownFile>} files
+ * @property {string[]} content
+ */
+
+/**
+ * @returns {PackdownDocument}
+ */
+function PackdownDocument() {
+  return {
+    files: {},
+    content: []
+  };
+}
 
 /**
  * Does line start with 4 spaces?
@@ -55,6 +95,7 @@ function removeSourceIndentation(input) {
 /**
  * Convert text input to Packdown document.
  * @param {string} input
+ * @returns {PackdownDocument}
  */
 function read(input) {
   let text = String(input);
@@ -65,43 +106,34 @@ function read(input) {
 
   const lines = text.split('\n');
 
-  const document = {
-    files: {},
-    content: []
-  };
+  const pendingFiles = {};
+  const document = PackdownDocument();
 
   let file = null;
   let source = null;
 
   for (const line of lines) {
     const matchFileHeading = line.match(RE_FILE_HEADING);
-    const matchCodeHeading = line.match(RE_CODE_HEADING);
-    const matchCodeEnd = line.match(RE_CODE_END);
+    const matchCodeFence = line.match(RE_CODE_FENCE);
 
     if (matchFileHeading) {
       if (!file) {
-        file = {
-          name: matchFileHeading[1],
-          info: [],
-          tag: null,
-          content: [],
-          pending: true
-        };
-
+        file = PackdownFile(matchFileHeading[2], matchFileHeading[1].length);
         document.files[file.name] = file;
+        pendingFiles[file.name] = true;
       } else {
         throw Error('Unexpected file');
       }
-    } else if (file && (matchCodeHeading || matchCodeEnd)) {
-      const codeTag = matchCodeHeading && matchCodeHeading[1];
+    } else if (file && matchCodeFence) {
+      const codeTag = matchCodeFence && matchCodeFence[1];
 
       if (!source) {
-        file.tag = codeTag;
-        source = codeTag || 'code';
-      } else if (!codeTag && file.pending) {
-        delete file.pending;
+        file.infoString = codeTag;
+        source = true;
+      } else if (!codeTag && pendingFiles[file.name]) {
+        delete pendingFiles[file.name];
         file.content = removeSourceIndentation(file.content);
-        document.content.push({ file: file.name });
+        document.content.push(`${PACKDOWN_FILE_PREFIX}${file.name}`);
         file = null;
         source = null;
       } else {
@@ -109,7 +141,7 @@ function read(input) {
       }
     } else {
       if (file && !source) {
-        file.info.push(line);
+        file.details.push(line);
       } else if (file && source) {
         file.content.push(line);
       } else {
@@ -125,7 +157,35 @@ function read(input) {
   return document;
 }
 
+/**
+ * Convert Packdown document to text.
+ * @param {PackdownDocument} document
+ * @returns {string}
+ */
+function write(document) {
+  const { content, files } = document;
+
+  if (!content || !files) {
+    throw Error('Document content or files missing');
+  } else if (!Array.isArray(content)) {
+    throw Error('Document content not an array');
+  } else if (Object(files) !== files) {
+    throw Error('Document files not an object');
+  }
+
+  return content.map(line => {
+    if (line.indexOf(PACKDOWN_FILE_PREFIX) === 0) {
+      const file = files[line.slice(PACKDOWN_FILE_PREFIX.length)];
+      const { name, headingLevel, details, infoString, content } = file;
+      const heading = Array(headingLevel + 1).join('#') + ' /' + name;
+      return [heading, details.join('\n'), '```' + (infoString || ''), content.join('\n'), '```'].join('\n');
+    }
+    return line;
+  }).join('\n');
+}
+
 export default {
   read,
+  write,
   version: 'VERSION'
 }
