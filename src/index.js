@@ -179,7 +179,7 @@ function write(document) {
         const file = files[line.slice(PACKDOWN_FILE_PREFIX.length)];
         const { name, headingLevel, details, infoString = '', content } = file;
         const heading =
-          Array(Math.max(2, headingLevel + 1)).join('#') + ' /' + name;
+          Array(Math.max(2, (headingLevel || 1) + 1)).join('#') + ' /' + name;
         return [
           heading,
           details.join('\n'),
