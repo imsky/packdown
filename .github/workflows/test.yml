@@ -11,4 +11,6 @@ jobs:
       - run: npm install -g codecov
       - run: npm install
       - run: npm test
+        env:
+          NYC_FLAGS: "--reporter lcovonly"
       - run: codecov
