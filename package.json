@@ -51,6 +51,9 @@
     "check-coverage": true,
     "branches": 100
   },
+  "engines": {
+    "node": ">=12.0.0"
+  },
   "build": {
     "name": "packdown",
     "friendlyName": "Packdown",
