@@ -193,6 +193,25 @@ function write(document) {
     .join('\n');
 }
 
+/**
+ * @typedef {Object} PackdownCommandHostObject
+ * @property {function} readFile Node-style callback function that takes a path and returns the contents of the file at the path
+ * @property {function} readDir Node-style callback function that takes a path and returns an array of files in the directory at the path
+ * @property {function} joinPath A function that joins two path segments together, e.g. a + b = a/b
+ * @property {function} writeFile Node-style callback function that takes a path and data and writes the data to a file at the path
+ */
+
+ /**
+ * @typedef {Object} PackdownCommandInterface
+ * @property {function} pack Node-style callback function that takes a source path and a destination path and combines files from the directory at the source path into a Packdown document written to a file at the destination path
+ * @property {function} unpack Node-style callback function that takes source path and a destination path and extracts files from the Packdown document at the source path to the directory at the destination path
+ */
+
+ /**
+  * Provide command interface for packing and unpacking documents.
+  * @param {PackdownCommandHostObject} hostObject an object that provides readFile, readDir, joinPath, and writeFile functions
+  * @returns {PackdownCommandInterface} Packdown command interface
+  */
 function commandFactory(hostObject) {
   let { readFile, readDir, joinPath, writeFile } = hostObject;
 
@@ -239,6 +258,10 @@ function commandFactory(hostObject) {
 
   /**
    * Combine files into a Packdown document and write it to storage.
+   *
+   * If there's a "merge document", a Packdown document with files,
+   * named README.md or index.md (index.md taking precedence) in the
+   * source directory ("src"), it'll be updated and used as the output.
    * @param {*} src Directory containing files
    * @param {*} dst Packdown document (e.g. example.md)
    * @param {*} cb Node-style callback function called when packing is done or there's an error
