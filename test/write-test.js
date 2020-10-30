@@ -23,6 +23,24 @@ describe('Packdown', function () {
       expect(out).to.equal(fixtures.documents.basic);
     });
 
+    it('uses a default value if heading level is invalid', function () {
+      const doc = {
+        files: {
+          hello: {
+            name: 'hello',
+            infoString: undefined,
+            headingLevel: -1,
+            details: ['basic file'],
+            content: ['{{foo}}', 'bar']
+          }
+        },
+        content: ['packdown:/hello', '']
+      };
+      expect(packdown.write(doc)).to.include('# /hello');
+      delete doc.files.hello.headingLevel;
+      expect(packdown.write(doc)).to.include('# /hello');
+    });
+
     it('fails if content or files are missing', function () {
       expect(function () {
         packdown.write({});

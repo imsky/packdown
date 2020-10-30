@@ -193,8 +193,49 @@ function write(document) {
     .join('\n');
 }
 
+function commandFactory(hostObject) {
+  let { readFile, joinPath, writeFile } = hostObject;
+
+  if (!joinPath) {
+    joinPath = (a, b) => `${a}/${b}`;
+  }
+
+  function unpack(src, dst, cb) {
+    readFile(src, function unpackDocument(err, srcFile) {
+      if (err) {
+        return cb(err);
+      }
+
+      const doc = read(srcFile);
+      const fileNames = Object.keys(doc.files);
+
+      if (!fileNames.length) {
+        return cb();
+      }
+
+      fileNames.forEach(function writeDocumentFile(fileName, i) {
+        const file = doc.files[fileName];
+        writeFile(
+          joinPath(dst, fileName),
+          file.content.join('\n'),
+          function checkProgress (err) {
+            if (err) {
+              return cb(err);
+            } else if (i === fileNames.length - 1) {
+              return cb();
+            }
+          }
+        );
+      });
+    });
+  }
+
+  return Object.freeze({ unpack });
+}
+
 export default {
   read,
   write,
+  commandFactory,
   version: 'VERSION'
 };
