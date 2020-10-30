@@ -12,7 +12,7 @@
     "posttest": "npm run lint",
     "prebuild": "rm -rf dist/*",
     "prepublish": "npm run format && npm run build",
-    "test": "nyc mocha './test/*-test.js'"
+    "test": "nyc ${NYC_FLAGS} mocha './test/*-test.js'"
   },
   "keywords": [
     "markdown",
