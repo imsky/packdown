@@ -179,7 +179,7 @@ function write(document) {
         const file = files[line.slice(PACKDOWN_FILE_PREFIX.length)];
         const { name, headingLevel, details, infoString = '', content } = file;
         const heading =
-          Array(Math.max(2, headingLevel + 1)).join('#') + ' /' + name;
+          Array(Math.max(2, (headingLevel || 1) + 1)).join('#') + ' /' + name;
         return [
           heading,
           details.join('\n'),
@@ -193,8 +193,163 @@ function write(document) {
     .join('\n');
 }
 
+/**
+ * @typedef {Object} PackdownCommandHostObject
+ * @property {function} readFile Node-style callback function that takes a path and returns the contents of the file at the path
+ * @property {function} readDir Node-style callback function that takes a path and returns an array of files in the directory at the path
+ * @property {function} joinPath A function that joins two path segments together, e.g. a + b = a/b
+ * @property {function} writeFile Node-style callback function that takes a path and data and writes the data to a file at the path
+ */
+
+ /**
+ * @typedef {Object} PackdownCommandInterface
+ * @property {function} pack Node-style callback function that takes a source path and a destination path and combines files from the directory at the source path into a Packdown document written to a file at the destination path
+ * @property {function} unpack Node-style callback function that takes source path and a destination path and extracts files from the Packdown document at the source path to the directory at the destination path
+ */
+
+ /**
+  * Provide command interface for packing and unpacking documents.
+  * @param {PackdownCommandHostObject} hostObject an object that provides readFile, readDir, joinPath, and writeFile functions
+  * @returns {PackdownCommandInterface} Packdown command interface
+  */
+function commandFactory(hostObject) {
+  let { readFile, readDir, joinPath, writeFile } = hostObject;
+
+  if (!joinPath) {
+    joinPath = (a, b) => `${a}/${b}`;
+  }
+
+  /**
+   * Extract files from a Packdown document and write them to storage.
+   * @param {*} src Packdown document (e.g. example.md)
+   * @param {*} dst Directory where files from Packdown document should be extracted
+   * @param {*} cb Node-style callback function called when unpacking is done or there's an error
+   * @returns {void}
+   */
+  function unpack(src, dst, cb) {
+    readFile(src, function unpackDocument(err, f) {
+      if (err) {
+        return cb(err);
+      }
+
+      const doc = read(f);
+      const fileNames = Object.keys(doc.files);
+
+      if (!fileNames.length) {
+        return cb();
+      }
+
+      fileNames.forEach(function writeFileFromDocument(fileName, i) {
+        const file = doc.files[fileName];
+        writeFile(
+          joinPath(dst, file.name),
+          file.content.join('\n'),
+          function checkProgress(err) {
+            if (err) {
+              return cb(err);
+            } else if (i === fileNames.length - 1) {
+              return cb();
+            }
+          }
+        );
+      });
+    });
+  }
+
+  /**
+   * Combine files into a Packdown document and write it to storage.
+   *
+   * If there's a "merge document", a Packdown document with files,
+   * named README.md or index.md (index.md taking precedence) in the
+   * source directory ("src"), it'll be updated and used as the output.
+   * @param {*} src Directory containing files
+   * @param {*} dst Packdown document (e.g. example.md)
+   * @param {*} cb Node-style callback function called when packing is done or there's an error
+   * @returns {void}
+   */
+  function pack(src, dst, cb) {
+    function packFilesToDocument(files, doc) {
+      let done = false;
+      files.forEach(function writeFileToDocument(fileName, i) {
+        if (done) {
+          return;
+        }
+        readFile(joinPath(src, fileName), function checkProgress(err, data) {
+          if (err) {
+            done = true;
+            return cb(err);
+          }
+
+          const existingFile = doc.files[fileName];
+          const file = existingFile || PackdownFile(fileName, null);
+          file.content = data.split('\n');
+          doc.files[fileName] = file;
+
+          if (!existingFile) {
+            doc.content.push(`packdown:/${fileName}`);
+          }
+
+          if (i === files.length - 1) {
+            writeFile(dst, write(doc), cb);
+          }
+        });
+      });
+    }
+
+    readDir(src, function packFiles(err, files) {
+      if (err) {
+        return cb(err);
+      } else if (!Array.isArray(files)) {
+        return cb('Files not an array');
+      }
+
+      if (!files.length) {
+        return cb();
+      }
+
+      let doc = PackdownDocument();
+
+      const mergeFiles = files
+        .map(f => f.toLowerCase())
+        .filter(f => f === 'index.md' || f === 'readme.md');
+      const mergeFile =
+        mergeFiles.indexOf('index.md') !== -1
+          ? 'index.md'
+          : files.indexOf('readme.md') !== -1
+          ? 'readme.md'
+          : null;
+
+      if (mergeFile) {
+        readFile(joinPath(src, mergeFile), function checkIfMergeFileIsPackdown(
+          err,
+          f
+        ) {
+          if (err) {
+            return cb(err);
+          }
+
+          const mergeDoc = read(f);
+          let filesToPack = files;
+
+          if (Object.keys(mergeDoc.files).length) {
+            doc = mergeDoc;
+            filesToPack = files.filter(f => f !== mergeFile);
+          }
+
+          packFilesToDocument(filesToPack, doc);
+        });
+      } else {
+        packFilesToDocument(files, doc);
+      }
+    });
+  }
+
+  return Object.freeze({ unpack, pack });
+}
+
 export default {
   read,
   write,
+  commandFactory,
   version: 'VERSION'
 };
