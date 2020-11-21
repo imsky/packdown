@@ -1,12 +1,11 @@
-#!/usr/bin/env node
-
 const fs = require('fs');
 const path = require('path');
 
-const packdown = require('../dist/packdown.js');
+require('reify');
 
-const args = process.argv.slice(2);
-const [command] = args;
+const packdown = require('../src').default;
+const packageJSON = require('../package.json');
+const { author, version } = packageJSON;
 
 const hostObject = {
   readFile: function (path, cb) {
@@ -25,30 +24,4 @@ const hostObject = {
 
 const commands = packdown.commandFactory(hostObject);
 
-function showUsage() {
-  console.log(`Packdown v${packdown.version} © 2015-2020 Ivan Malopinsky`);
-  console.log('Usage: packdown <command> [args]\n');
-  console.log('Commands:');
-  console.log('\tpack <dir> <file>\tCombine files from <dir> into <file>');
-  console.log('\tunpack <file> <dir>\tExtract files from <file> into <dir>');
-}
-
-if (command === 'pack') {
-  const [, src, dst] = args;
-  commands.pack(src, dst, function (err) {
-    if (err) {
-      throw err;
-    }
-    console.log(`Packed ${src} into ${dst}`);
-  });
-} else if (command === 'unpack') {
-  const [, src, dst] = args;
-  commands.unpack(src, dst, function (err) {
-    if (err) {
-      throw err;
-    }
-    console.log(`Unpacked ${src} into ${dst}`);
-  });
-} else {
-  showUsage();
-}
+module.exports = { commands, version, author };
