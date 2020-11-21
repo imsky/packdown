@@ -1,12 +1,12 @@
 {
   "name": "packdownjs",
-  "version": "0.9.9",
+  "version": "0.9.99",
   "author": "Ivan Malopinsky",
   "license": "MIT",
   "description": "Files in Markdown",
   "main": "dist/packdown.js",
   "bin": {
-    "packdown": "node/index.js"
+    "packdown": "node/cli.js"
   },
   "scripts": {
     "build": "rollup --config",

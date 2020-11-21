@@ -7,7 +7,7 @@ const { expect } = require('chai');
 
 const fixtures = require('./fixtures');
 
-const cliPath = path.join(__dirname, '..', 'node');
+const cliPath = path.join(__dirname, '..', 'node', 'cli');
 
 describe('Packdown', function () {
   describe('Node CLI', function () {
