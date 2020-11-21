@@ -5,6 +5,9 @@
   "license": "MIT",
   "description": "Files in Markdown",
   "main": "dist/packdown.js",
+  "bin": {
+    "packdown": "node/index.js"
+  },
   "scripts": {
     "build": "rollup --config",
     "format": "prettier --single-quote --write src/**/*",
@@ -49,7 +52,8 @@
   },
   "nyc": {
     "check-coverage": true,
-    "branches": 100
+    "branches": 100,
+    "exclude": ["dist/**", "test/**"]
   },
   "engines": {
     "node": ">=12.0.0"
